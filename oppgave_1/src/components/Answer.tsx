@@ -1,6 +1,6 @@
 "use client"
 
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import type { FormEvent, MouseEvent } from "react"
 
 import { CurrentTaskContext } from "@/contexts/CurrentTaskContext"
@@ -16,8 +16,23 @@ export default function Answer() {
   const [answer, setAnswer] = useState(0)
   const [attempts, setAttempts] = useState(0)
 
+  useEffect(() => {
+    // Reset attempts whenever the current task changes
+    setAttempts(0)
+  }, [currentTask])
+
+  const MAX_ATTEMPTS = 3
+
   const send = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
+
+    if (attempts >= MAX_ATTEMPTS) {
+      const feedback = document.getElementById("feedback")
+      if (feedback) {
+        feedback.textContent = "Maks antall forsøk brukt, gå til neste oppgave."
+      }
+      return
+    }
 
     const id = currentTask?.id
 
@@ -75,12 +90,12 @@ export default function Answer() {
       </section>
 
       <p id="attempts">
-        {attempts >= 3
+        {attempts >= MAX_ATTEMPTS
           ? `${attempts} av 3 forsøk, maks antall brukt.`
           : `${attempts} av 3 forsøk`}
       </p>
 
-      {attempts >= 3 ? (
+      {attempts >= MAX_ATTEMPTS ? (
         <button id="checkAnswerButton" onClick={getAnswer}>
           Se svaret
         </button>

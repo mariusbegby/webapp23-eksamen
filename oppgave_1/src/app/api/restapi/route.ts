@@ -25,7 +25,6 @@ const tasks: Task[] = [
   },
 ]
 
-// TODO: Denne skal brukes til å "samle" svarene (om du ikke bruker database)
 const answers = new Map<Task["id"], { attempts: number }>()
 
 export async function PUT(request: NextRequest) {
@@ -33,7 +32,6 @@ export async function PUT(request: NextRequest) {
     id: string
     answer: number
   }
-  console.log("PUT", id, answer)
 
   const task = tasks.find((task) => task.id === id)
   if (!task) {
@@ -55,6 +53,8 @@ export async function PUT(request: NextRequest) {
 
     answers.set(id, { attempts: currentAttempts + 1 })
 
+    console.log(answers)
+
     return NextResponse.json(
       {
         success: false,
@@ -65,7 +65,10 @@ export async function PUT(request: NextRequest) {
     )
   }
 
-  answers.set(id, { attempts: 0 })
+  const currentAttempts = answers.get(id)?.attempts ?? 0
+  answers.set(id, { attempts: currentAttempts })
+  console.log(answers)
+
   return NextResponse.json({ success: true }, { status: 200 })
 }
 

@@ -9,11 +9,24 @@ export default function useProgress({
   current: Task | null
   setCurrent: (task: Task | null) => void
 }) {
+  const clear = () => {
+    const feedback = document.getElementById("feedback")
+    if (feedback) {
+      feedback.textContent = ""
+    }
+
+    const attempts = document.getElementById("attempts")
+    if (attempts) {
+      attempts.textContent = "0 av 3 forsøk"
+    }
+  }
+
   const next = () => {
     if (current) {
       const currentIndex = tasks.indexOf(current)
       if (currentIndex < tasks.length - 1) {
         setCurrent(tasks[currentIndex + 1])
+        clear()
       }
     }
   }
@@ -23,6 +36,7 @@ export default function useProgress({
       const currentIndex = tasks.indexOf(current)
       if (currentIndex > 0) {
         setCurrent(tasks[currentIndex - 1])
+        clear()
       }
     }
   }
