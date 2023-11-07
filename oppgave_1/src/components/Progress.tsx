@@ -1,31 +1,26 @@
 "use client"
 
-import { useState } from "react"
-import type { MouseEvent } from "react"
-
+import useProgress from "@/hooks/useProgress"
 import { type Task } from "@/types"
 
-export default function Progress(props: { tasks: Task[] }) {
-  const [state, setState] = useState(0)
-  const currentTask = props.tasks[state]
+type ProgressProps = {
+  tasks: Task[]
+}
 
-  const next = (event: MouseEvent<HTMLButtonElement>) => {
-    console.log(event)
-    setState(state + 1)
-  }
-
-  const prev = (event: MouseEvent<HTMLButtonElement>) => {
-    console.log(event)
-    setState(state - 1)
-  }
+export default function Progress({ tasks }: ProgressProps) {
+  const { count, current, next, prev } = useProgress({ tasks })
+  const lastPosition = tasks.length
 
   return (
     <footer className="mt-4 border-t-slate-300">
-      <p>{currentTask.id}</p>
-      <button onClick={next} className="bg-purple-700 text-white">
+      <p>
+        Posisjon: {count + 1} / {lastPosition}.
+      </p>
+      <p>{current.id}</p>
+      <button onClick={prev} className="bg-purple-700 text-white">
         Forrige
       </button>
-      <button onClick={prev} className="bg-teal-700 text-white">
+      <button onClick={next} className="bg-teal-700 text-white">
         Neste
       </button>
     </footer>

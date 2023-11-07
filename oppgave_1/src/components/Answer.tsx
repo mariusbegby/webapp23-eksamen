@@ -3,16 +3,41 @@
 import { useState } from "react"
 import type { FormEvent, MouseEvent } from "react"
 
+type ApiResponse = {
+  success: boolean
+}
+
 export default function Answer() {
   const [answer, setAnswer] = useState(0)
 
-  const send = (event: MouseEvent<HTMLButtonElement>) => {
+  const send = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
-    console.log(answer)
+
+    // TODO: get actual id and answer
+    const id = "123"
+    const response = await fetch(`http://localhost:3000/api/restapi`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id, answer }),
+    })
+
+    const result = (await response.json()) as ApiResponse
+
+    const feedback = document.getElementById("feedback")
+    if (!feedback) return
+
+    if (!result.success) {
+      return (feedback.textContent = "Feil svar")
+    }
+
+    return (feedback.textContent = "Bra jobbet!")
   }
 
   const update = (event: FormEvent<HTMLInputElement>) => {
-    setAnswer(event.currentTarget.valueAsNumber)
+    const valueAsNumber = parseInt(event.currentTarget.value)
+    setAnswer(valueAsNumber)
   }
 
   return (
@@ -24,8 +49,12 @@ export default function Answer() {
         placeholder="Sett svar her"
         onInput={update}
       />
-      {9 + 2 === answer ? "Bra jobbet!" : null}
       <button onClick={send}>Send</button>
+      <p id="feedback"></p>
+
+      <div style={{ display: "none" }}>
+        {9 + 2 === answer ? "Bra jobbet!" : ""}
+      </div>
     </div>
   )
 }
