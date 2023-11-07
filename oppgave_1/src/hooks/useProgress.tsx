@@ -1,3 +1,6 @@
+import { useContext } from "react"
+
+import { CurrentTaskContext } from "@/contexts/CurrentTaskContext"
 import { type Task } from "@/types"
 
 export default function useProgress({
@@ -9,6 +12,8 @@ export default function useProgress({
   current: Task | null
   setCurrent: (task: Task | null) => void
 }) {
+  const { setIsDone } = useContext(CurrentTaskContext)
+
   const clear = () => {
     const feedback = document.getElementById("feedback")
     if (feedback) {
@@ -20,12 +25,12 @@ export default function useProgress({
       attempts.textContent = "0 av 3 forsøk"
     }
   }
-
   const next = () => {
     if (current) {
       const currentIndex = tasks.indexOf(current)
       if (currentIndex < tasks.length - 1) {
         setCurrent(tasks[currentIndex + 1])
+        setIsDone(false)
         clear()
       }
     }

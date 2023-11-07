@@ -8,7 +8,6 @@ import Progress from "@/components/Progress"
 import Tasks from "@/components/Tasks"
 import TaskText from "@/components/Text"
 import { CurrentTaskContext } from "@/contexts/CurrentTaskContext"
-import useProgress from "@/hooks/useProgress"
 import { type Task } from "@/types"
 
 type ApiResponse = {
@@ -19,6 +18,7 @@ type ApiResponse = {
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([])
   const [currentTask, setCurrentTask] = useState<Task | null>(null)
+  const [isDone, setIsDone] = useState(false)
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -45,19 +45,47 @@ export default function Home() {
     return <div>Loading...</div>
   }
 
+  const currentIndex = currentTask && tasks.indexOf(currentTask)
+  const isLastTask = currentIndex === tasks.length - 1
+  const nextTask = currentIndex && tasks[currentIndex + 1]
+  const showResults = isLastTask && isDone && !nextTask
+
+  const restart = () => {
+    setIsDone(false)
+    // TODO: get new tasks
+
+    setCurrentTask(tasks[0])
+  }
+
   return (
     <main>
       <Header />
-      <CurrentTaskContext.Provider value={currentTask}>
-        <Tasks task={currentTask}>
-          <Answer />
-        </Tasks>
-        <TaskText text={"Hva blir resultatet av regneoperasjonen?"} />
-        <Progress
-          tasks={tasks}
-          current={currentTask}
-          setCurrent={setCurrentTask}
-        />
+      <CurrentTaskContext.Provider
+        value={{ currentTask, tasks, isDone, setIsDone }}
+      >
+        {showResults ? (
+          <>
+            <div id="results">Results</div>
+            <button
+              onClick={restart}
+              className="button bg-purple-700  text-white"
+            >
+              Start på nytt
+            </button>
+          </>
+        ) : (
+          <>
+            <Tasks task={currentTask}>
+              <Answer />
+            </Tasks>
+            <TaskText text={"Hva blir resultatet av regneoperasjonen?"} />
+            <Progress
+              tasks={tasks}
+              current={currentTask}
+              setCurrent={setCurrentTask}
+            />
+          </>
+        )}
       </CurrentTaskContext.Provider>
     </main>
   )

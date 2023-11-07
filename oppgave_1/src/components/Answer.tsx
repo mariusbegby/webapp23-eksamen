@@ -12,7 +12,11 @@ type ApiResponse = {
 }
 
 export default function Answer() {
-  const currentTask = useContext(CurrentTaskContext)
+  const MAX_ATTEMPTS = 3
+
+  const { currentTask, tasks, isDone, setIsDone } =
+    useContext(CurrentTaskContext)
+
   const [answer, setAnswer] = useState(0)
   const [attempts, setAttempts] = useState(0)
 
@@ -20,8 +24,6 @@ export default function Answer() {
     // Reset attempts whenever the current task changes
     setAttempts(0)
   }, [currentTask])
-
-  const MAX_ATTEMPTS = 3
 
   const send = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
@@ -31,6 +33,7 @@ export default function Answer() {
       if (feedback) {
         feedback.textContent = "Maks antall forsøk brukt, gå til neste oppgave."
       }
+      setIsDone(true)
       return
     }
 
@@ -51,10 +54,15 @@ export default function Answer() {
 
     if (!result.success) {
       setAttempts(result.attempts ?? 0)
+
+      if (result.attempts && result.attempts >= MAX_ATTEMPTS) {
+        setIsDone(true)
+      }
       return (feedback.textContent = "Feil svar")
     }
 
     setAttempts(0)
+    setIsDone(true)
     return (feedback.textContent = "Bra jobbet!")
   }
 
