@@ -52,18 +52,20 @@ export default function Answer() {
   }
 
   return (
-    <div>
-      <label htmlFor="answer">Svar</label>
-      <input
-        name="answer"
-        type="text"
-        placeholder="Sett svar her"
-        onInput={update}
-      />
-      <button onClick={send}>Send</button>
-      <p id="feedback"></p>
+    <div id="answer">
+      <section>
+        <label htmlFor="answer">Ditt svar:</label>
+        <input
+          name="answer"
+          type="text"
+          placeholder="Sett svar her"
+          onInput={update}
+        />
+        <button onClick={send}>Send</button>
+        <p id="feedback"></p>
+      </section>
 
-      <p>
+      <p id="attempts">
         {attempts >= 3
           ? `${attempts} av 3 forsøk, maks antall brukt.`
           : `${attempts} av 3 forsøk`}

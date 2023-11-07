@@ -8,19 +8,15 @@ type ProgressProps = {
 }
 
 export default function Progress({ tasks }: ProgressProps) {
-  const { count, current, next, prev } = useProgress({ tasks })
-  const lastPosition = tasks.length
+  const { current, next, prev } = useProgress({ tasks })
 
   return (
     <footer className="mt-4 border-t-slate-300">
-      <p>
-        Posisjon: {count + 1} / {lastPosition}.
-      </p>
-      <p>{current.id}</p>
-      <button onClick={prev} className="bg-purple-700 text-white">
+      <div style={{ display: "none" }}>{current.id}</div>
+      <button onClick={prev} className="button bg-purple-700  text-white">
         Forrige
       </button>
-      <button onClick={next} className="bg-teal-700 text-white">
+      <button onClick={next} className="button bg-teal-700 text-white">
         Neste
       </button>
     </footer>

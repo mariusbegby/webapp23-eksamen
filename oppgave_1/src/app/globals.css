@@ -97,3 +97,69 @@
     margin: 0;
   }
 }
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  background-color: #f4f4f4;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 1rem auto;
+  width: 90%;
+  max-width: 40rem;
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+section > article {
+  background-color: #fff;
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+
+section > article > h3 {
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+#answer {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#answer > section {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#answer > section > button {
+  font-weight: 700;
+}
+
+footer {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.button {
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+}
