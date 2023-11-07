@@ -1,7 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useContext, useState } from "react"
 import type { FormEvent, MouseEvent } from "react"
+
+import { CurrentTaskContext } from "@/contexts/CurrentTaskContext"
 
 type ApiResponse = {
   success: boolean
@@ -9,13 +11,14 @@ type ApiResponse = {
 }
 
 export default function Answer() {
+  const currentTask = useContext(CurrentTaskContext)
   const [answer, setAnswer] = useState(0)
   const [attempts, setAttempts] = useState(0)
 
   const send = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    const id = 123
+    const id = currentTask?.id
 
     const response = await fetch(`http://localhost:3000/api/restapi`, {
       method: "PUT",
