@@ -48,7 +48,7 @@ export default function Home() {
     <main>
       <Header />
       <CurrentTaskContext.Provider value={current}>
-        <Tasks tasks={tasks}>
+        <Tasks task={current}>
           <Answer />
         </Tasks>
         <TaskText text={"Hva blir resultatet av regneoperasjonen?"} />

@@ -48,7 +48,7 @@ export default function Answer() {
   }
 
   const getAnswer = () => {
-    const button = document.getElementById("chekcAnswerButton")
+    const button = document.getElementById("checkAnswerButton")
     if (!button) return
     button.textContent = "Svaret er 11"
     return 1
@@ -75,7 +75,7 @@ export default function Answer() {
       </p>
 
       {attempts >= 3 ? (
-        <button id="chekcAnswerButton" onClick={getAnswer}>
+        <button id="checkAnswerButton" onClick={getAnswer}>
           Se svaret
         </button>
       ) : null}

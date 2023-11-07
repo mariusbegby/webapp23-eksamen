@@ -4,19 +4,17 @@ import { type Task } from "@/types"
 
 type TasksProps = {
   children: ReactNode
-  tasks: Task[]
+  task: Task
 }
 
-export default function Tasks({ children, tasks }: TasksProps) {
+export default function Tasks({ children, task }: TasksProps) {
   return (
     <section>
-      {tasks.map((task) => (
-        <article key={task.id}>
-          <p>{task.type}</p>
-          <h3>{task.text}</h3>
-          <p>{task.data}</p>
-        </article>
-      ))}
+      <article>
+        <p>{task.type}</p>
+        <h3>{task.text}</h3>
+        <p>{task.data}</p>
+      </article>
       {children}
     </section>
   )

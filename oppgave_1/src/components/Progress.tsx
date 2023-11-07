@@ -1,5 +1,3 @@
-"use client"
-
 import useProgress from "@/hooks/useProgress"
 import { type Task } from "@/types"
 
