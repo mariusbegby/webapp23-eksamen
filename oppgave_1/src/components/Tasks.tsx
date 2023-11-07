@@ -4,10 +4,14 @@ import { type Task } from "@/types"
 
 type TasksProps = {
   children: ReactNode
-  task: Task
+  task: Task | null
 }
 
 export default function Tasks({ children, task }: TasksProps) {
+  if (!task) {
+    return null
+  }
+
   return (
     <section>
       <article>

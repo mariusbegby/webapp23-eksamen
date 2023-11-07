@@ -18,7 +18,7 @@ type ApiResponse = {
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([])
-  const { current } = useProgress({ tasks })
+  const [currentTask, setCurrentTask] = useState<Task | null>(null)
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -32,6 +32,7 @@ export default function Home() {
 
       if (result.success) {
         setTasks(result.data)
+        setCurrentTask(result.data[0])
       }
     }
 
@@ -47,12 +48,16 @@ export default function Home() {
   return (
     <main>
       <Header />
-      <CurrentTaskContext.Provider value={current}>
-        <Tasks task={current}>
+      <CurrentTaskContext.Provider value={currentTask}>
+        <Tasks task={currentTask}>
           <Answer />
         </Tasks>
         <TaskText text={"Hva blir resultatet av regneoperasjonen?"} />
-        <Progress tasks={tasks} />
+        <Progress
+          tasks={tasks}
+          current={currentTask}
+          setCurrent={setCurrentTask}
+        />
       </CurrentTaskContext.Provider>
     </main>
   )

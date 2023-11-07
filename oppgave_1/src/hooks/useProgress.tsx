@@ -1,22 +1,31 @@
-import { useState } from "react"
-
 import { type Task } from "@/types"
 
-export default function useProgress({ tasks }: { tasks: Task[] }) {
-  const [count, setCount] = useState(0)
-  const current = tasks[count]
-
+export default function useProgress({
+  tasks,
+  current,
+  setCurrent,
+}: {
+  tasks: Task[]
+  current: Task | null
+  setCurrent: (task: Task | null) => void
+}) {
   const next = () => {
-    if (count < tasks.length - 1) {
-      setCount(count + 1)
+    if (current) {
+      const currentIndex = tasks.indexOf(current)
+      if (currentIndex < tasks.length - 1) {
+        setCurrent(tasks[currentIndex + 1])
+      }
     }
   }
 
   const prev = () => {
-    if (count > 0) {
-      setCount(count - 1)
+    if (current) {
+      const currentIndex = tasks.indexOf(current)
+      if (currentIndex > 0) {
+        setCurrent(tasks[currentIndex - 1])
+      }
     }
   }
 
-  return { count, current, next, prev }
+  return { current, next, prev }
 }

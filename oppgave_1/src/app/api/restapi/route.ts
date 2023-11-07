@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
+import { calculateAnswer } from "@/lib/utils"
 import { type Task } from "@/types"
 
 const tasks: Task[] = [
@@ -23,20 +24,6 @@ const tasks: Task[] = [
     type: "multiply",
   },
 ]
-
-function calculateAnswer(task: Task) {
-  const [a, b] = task.data.split("|")
-  switch (task.type) {
-    case "add":
-      return Number(a) + Number(b)
-    case "subtract":
-      return Number(a) - Number(b)
-    case "multiply":
-      return Number(a) * Number(b)
-    case "divide":
-      return Number(a) / Number(b)
-  }
-}
 
 // TODO: Denne skal brukes til å "samle" svarene (om du ikke bruker database)
 const answers = new Map<Task["id"], { attempts: number }>()

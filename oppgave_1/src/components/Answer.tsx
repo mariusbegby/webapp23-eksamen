@@ -4,6 +4,7 @@ import { useContext, useState } from "react"
 import type { FormEvent, MouseEvent } from "react"
 
 import { CurrentTaskContext } from "@/contexts/CurrentTaskContext"
+import { calculateAnswer } from "@/lib/utils"
 
 type ApiResponse = {
   success: boolean
@@ -48,10 +49,15 @@ export default function Answer() {
   }
 
   const getAnswer = () => {
+    if (!currentTask) return
+
+    const answer = calculateAnswer(currentTask)
+
     const button = document.getElementById("checkAnswerButton")
     if (!button) return
-    button.textContent = "Svaret er 11"
-    return 1
+    button.textContent = `Svaret er ${answer}`
+
+    return
   }
 
   return (

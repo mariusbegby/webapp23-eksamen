@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import {
   act,
   fireEvent,
@@ -54,7 +54,14 @@ describe("Progress Component", () => {
     },
   ]
   it("renders with default state and buttons", () => {
-    render(<Progress tasks={tasks} />)
+    const TestComponent = () => {
+      const [current, setCurrent] = useState<Task | null>(tasks[0])
+      return (
+        <Progress tasks={tasks} current={current} setCurrent={setCurrent} />
+      )
+    }
+
+    render(<TestComponent />)
 
     const currentTask = screen.getByText("123")
     expect(currentTask).toBeInTheDocument()
@@ -67,7 +74,14 @@ describe("Progress Component", () => {
   })
 
   it('increments the state when "Neste" is clicked', () => {
-    render(<Progress tasks={tasks} />)
+    const TestComponent = () => {
+      const [current, setCurrent] = useState<Task | null>(tasks[0])
+      return (
+        <Progress tasks={tasks} current={current} setCurrent={setCurrent} />
+      )
+    }
+
+    render(<TestComponent />)
     const nextButton = screen.getByText("Neste")
 
     fireEvent.click(nextButton)
@@ -77,7 +91,14 @@ describe("Progress Component", () => {
   })
 
   it('decrements the state when "Forrige" is clicked', () => {
-    render(<Progress tasks={tasks} />)
+    const TestComponent = () => {
+      const [current, setCurrent] = useState<Task | null>(tasks[0])
+      return (
+        <Progress tasks={tasks} current={current} setCurrent={setCurrent} />
+      )
+    }
+
+    render(<TestComponent />)
     const nextButton = screen.getByText("Neste")
     const prevButton = screen.getByText("Forrige")
 
@@ -142,34 +163,58 @@ describe("Progress Component", () => {
     expect(typeElement).toBeInTheDocument()
     expect(dataElement).toBeInTheDocument()
   })
-  it("initializes with count as 0 and returns the current task", () => {
-    const { result } = renderHook(() => useProgress({ tasks }))
 
-    expect(result.current.count).toBe(0)
-    expect(result.current.current).toEqual(tasks[0])
+  it("initializes with the first task as the current task", () => {
+    const TestComponent = () => {
+      const [current, setCurrent] = useState<Task | null>(tasks[0])
+      const { current: progressCurrent } = useProgress({
+        tasks,
+        current,
+        setCurrent,
+      })
+
+      // Check if the current task is the first task
+      expect(progressCurrent).toEqual(tasks[0])
+
+      return null
+    }
+
+    render(<TestComponent />)
   })
 
-  it("updates count when next is called", () => {
-    const { result } = renderHook(() => useProgress({ tasks }))
+  it("updates current task when next is called", () => {
+    let currentTask: Task | null = tasks[0]
+    const setCurrent = (task: Task | null) => {
+      currentTask = task
+    }
+
+    const { result } = renderHook(() =>
+      useProgress({ tasks, current: currentTask, setCurrent }),
+    )
 
     act(() => {
       result.current.next()
     })
 
-    expect(result.current.count).toBe(1)
-    expect(result.current.current).toEqual(tasks[1])
+    // Check if the current task is the second task
+    expect(currentTask).toEqual(tasks[1])
   })
 
-  it("updates count when prev is called", () => {
-    const { result } = renderHook(() => useProgress({ tasks }))
+  it("updates current task when prev is called", () => {
+    let currentTask: Task | null = tasks[2]
+    const setCurrent = (task: Task | null) => {
+      currentTask = task
+    }
+
+    const { result } = renderHook(() =>
+      useProgress({ tasks, current: currentTask, setCurrent }),
+    )
 
     act(() => {
-      result.current.next()
-      result.current.next()
       result.current.prev()
     })
 
-    expect(result.current.count).toBe(1)
-    expect(result.current.current).toEqual(tasks[1])
+    // Check if the current task is the second task
+    expect(currentTask).toEqual(tasks[1])
   })
 })
