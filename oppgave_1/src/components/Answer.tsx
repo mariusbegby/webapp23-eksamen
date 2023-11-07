@@ -5,16 +5,18 @@ import type { FormEvent, MouseEvent } from "react"
 
 type ApiResponse = {
   success: boolean
+  attempts?: number
 }
 
 export default function Answer() {
   const [answer, setAnswer] = useState(0)
+  const [attempts, setAttempts] = useState(0)
 
   const send = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
 
-    // TODO: get actual id and answer
-    const id = "123"
+    const id = 123
+
     const response = await fetch(`http://localhost:3000/api/restapi`, {
       method: "PUT",
       headers: {
@@ -29,15 +31,24 @@ export default function Answer() {
     if (!feedback) return
 
     if (!result.success) {
+      setAttempts(result.attempts ?? 0)
       return (feedback.textContent = "Feil svar")
     }
 
+    setAttempts(0)
     return (feedback.textContent = "Bra jobbet!")
   }
 
   const update = (event: FormEvent<HTMLInputElement>) => {
     const valueAsNumber = parseInt(event.currentTarget.value)
     setAnswer(valueAsNumber)
+  }
+
+  const getAnswer = () => {
+    const button = document.getElementById("chekcAnswerButton")
+    if (!button) return
+    button.textContent = "Svaret er 11"
+    return 1
   }
 
   return (
@@ -51,6 +62,18 @@ export default function Answer() {
       />
       <button onClick={send}>Send</button>
       <p id="feedback"></p>
+
+      <p>
+        {attempts >= 3
+          ? `${attempts} av 3 forsøk, maks antall brukt.`
+          : `${attempts} av 3 forsøk`}
+      </p>
+
+      {attempts >= 3 ? (
+        <button id="chekcAnswerButton" onClick={getAnswer}>
+          Se svaret
+        </button>
+      ) : null}
 
       <div style={{ display: "none" }}>
         {9 + 2 === answer ? "Bra jobbet!" : ""}
