@@ -46,7 +46,6 @@ export async function PUT(request: NextRequest) {
     id: string
     answer: number
   }
-
   console.log("PUT", id, answer)
 
   const task = tasks.find((task) => task.id === id)
@@ -57,19 +56,29 @@ export async function PUT(request: NextRequest) {
     )
   }
 
-  const correctAnswer = calculateAnswer(task) // replace with your actual calculation function
+  const correctAnswer = calculateAnswer(task)
   if (answer !== correctAnswer) {
-    console.log("Incorrect answer")
-    // TODO: add attempts to answers Map
+    const currentAttempts = answers.get(id)?.attempts ?? 0
+    if (currentAttempts >= 3) {
+      return NextResponse.json(
+        { success: false, error: "Maximum attempts reached", attempts: 3 },
+        { status: 400 },
+      )
+    }
+
+    answers.set(id, { attempts: currentAttempts + 1 })
+
     return NextResponse.json(
-      { success: false, error: "Incorrect answer" },
+      {
+        success: false,
+        error: "Incorrect answer",
+        attempts: currentAttempts + 1,
+      },
       { status: 400 },
     )
   }
 
-  // TODO: add answer to Map
-  console.log("Correct answer")
-
+  answers.set(id, { attempts: 0 })
   return NextResponse.json({ success: true }, { status: 200 })
 }
 
