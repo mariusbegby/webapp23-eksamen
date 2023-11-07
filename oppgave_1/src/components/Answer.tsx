@@ -93,7 +93,13 @@ export default function Answer() {
           placeholder="Sett svar her"
           onInput={update}
         />
-        <button onClick={send}>Send</button>
+        <button
+          className="button"
+          style={{ background: "#fff", border: "1px solid #333" }}
+          onClick={send}
+        >
+          Send
+        </button>
         <p id="feedback"></p>
       </section>
 
