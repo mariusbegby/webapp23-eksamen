@@ -171,3 +171,8 @@ footer {
   border-radius: 0.25rem;
   margin-bottom: 1rem;
 }
+
+#results h2 {
+  font-size: 1.25rem;
+  font-weight: 700;
+}

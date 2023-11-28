@@ -6,7 +6,8 @@ type CurrentTaskContextType = {
   currentTask: Task | null
   tasks: Task[]
   isDone: boolean
-  setIsDone: (done: boolean) => void // Add this line
+  setIsDone: (done: boolean) => void
+  submitAnswer: (id: string, answer: number) => void
 }
 
 export const CurrentTaskContext = createContext<CurrentTaskContextType>({
@@ -14,4 +15,5 @@ export const CurrentTaskContext = createContext<CurrentTaskContextType>({
   tasks: [],
   isDone: false,
   setIsDone: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+  submitAnswer: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
 })

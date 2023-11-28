@@ -14,7 +14,7 @@ type ApiResponse = {
 export default function Answer() {
   const MAX_ATTEMPTS = 3
 
-  const { currentTask, tasks, isDone, setIsDone } =
+  const { currentTask, tasks, isDone, setIsDone, submitAnswer } =
     useContext(CurrentTaskContext)
 
   const [answer, setAnswer] = useState(0)
@@ -38,6 +38,10 @@ export default function Answer() {
     }
 
     const id = currentTask?.id
+
+    if (!id) return
+
+    submitAnswer(id, answer)
 
     const response = await fetch(`http://localhost:3000/api/restapi`, {
       method: "PUT",

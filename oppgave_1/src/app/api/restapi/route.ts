@@ -53,8 +53,6 @@ export async function PUT(request: NextRequest) {
 
     answers.set(id, { attempts: currentAttempts + 1 })
 
-    console.log(answers)
-
     return NextResponse.json(
       {
         success: false,
@@ -67,9 +65,11 @@ export async function PUT(request: NextRequest) {
 
   const currentAttempts = answers.get(id)?.attempts ?? 0
   answers.set(id, { attempts: currentAttempts })
-  console.log(answers)
 
-  return NextResponse.json({ success: true }, { status: 200 })
+  return NextResponse.json(
+    { success: true, attempts: currentAttempts },
+    { status: 200 },
+  )
 }
 
 export function GET(request: NextRequest) {
