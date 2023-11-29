@@ -1,16 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Image from "next/image"
+import type { Athlete } from "@/types"
 import Link from "next/link"
 
 import { AthleteList } from "@/components/AthleteList"
-
-type Athlete = {
-  id: number
-  gender: string
-  sport: string
-}
+import { Sidebar } from "@/components/dashboard/Sidebar"
 
 type ResponseData = {
   success: boolean
@@ -18,7 +13,7 @@ type ResponseData = {
   error?: string
 }
 
-export default function Home() {
+export default function Dashboard() {
   const [athletes, setAthletes] = useState<Athlete[]>([])
 
   useEffect(() => {
@@ -37,30 +32,23 @@ export default function Home() {
   }, [])
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-2">
-      <h1 className="mb-4 text-4xl">Athlete Management</h1>
-      <div className="mx-auto w-full max-w-2xl rounded-xl bg-white p-6 shadow-md">
-        <div className="flex items-center space-x-4">
-          <div className="flex-shrink-0">
-            <Image
-              src="/img/logo.svg"
-              alt="ChitChat Logo"
-              width={48}
-              height={48}
-            />
+    <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
+      <Sidebar />
+      <div className="flex flex-col">
+        <header className="flex h-14 items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">
+          <h1 className="text-xl font-semibold">Dashboard</h1>
+        </header>
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-6">
+          <div className="grid gap-6">
+            <Link
+              href="/add-athlete"
+              className="mt-6 rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
+            >
+              Add Athlete
+            </Link>
+            <AthleteList athletes={athletes} />
           </div>
-          <div>
-            <div className="text-xl font-medium text-black">Athlete List</div>
-            <p className="text-gray-500">
-              You have {athletes.length} athletes.
-            </p>
-          </div>
-        </div>
-        <AthleteList athletes={athletes} />
-        <Link
-          href="/add-athlete"
-          className="mt-6 rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
-        ></Link>
+        </main>
       </div>
     </div>
   )
