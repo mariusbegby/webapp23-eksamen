@@ -1,5 +1,5 @@
 export type Athlete = {
-  id: number
+  userId: string
   gender: string
   sport: string
 }

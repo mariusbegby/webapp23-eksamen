@@ -1,4 +1,5 @@
 import type { Athlete } from "@/types"
+import Link from "next/link"
 
 type AthleteListProps = {
   athletes: Athlete[]
@@ -11,19 +12,19 @@ export function AthleteList({ athletes }: AthleteListProps) {
         <tr>
           <th
             scope="col"
-            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800"
           >
-            ID
+            Bruker ID
           </th>
           <th
             scope="col"
-            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800"
           >
             Sport
           </th>
           <th
             scope="col"
-            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800"
           >
             Kjønn
           </th>
@@ -31,9 +32,9 @@ export function AthleteList({ athletes }: AthleteListProps) {
       </thead>
       <tbody className="divide-y divide-gray-200 bg-white">
         {athletes.map((athlete) => (
-          <tr key={athlete.id}>
-            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-              {athlete.id}
+          <tr key={athlete.userId}>
+            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 transition-colors duration-200 ease-in-out hover:text-black">
+              <Link href={`/athletes/${athlete.userId}`}>{athlete.userId}</Link>
             </td>
             <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
               {athlete.sport}

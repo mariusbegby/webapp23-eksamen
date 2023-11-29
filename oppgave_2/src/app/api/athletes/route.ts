@@ -4,6 +4,7 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 
 type AthleteRequestBody = {
+  userId: string
   gender: string
   sport: string
 }
@@ -33,12 +34,12 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const { gender, sport } = (await request.json()) as AthleteRequestBody
+  const { userId, gender, sport } = (await request.json()) as AthleteRequestBody
 
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
     const newAthlete: Athlete = await prisma.athlete.create({
-      data: { gender, sport },
+      data: { userId, gender, sport },
     })
 
     return NextResponse.json({ success: true, data: newAthlete })
