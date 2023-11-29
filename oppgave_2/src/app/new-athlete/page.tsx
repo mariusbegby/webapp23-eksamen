@@ -8,12 +8,20 @@ import { Page } from "@/components/PageTemplate"
 
 const uuidv4: () => string = v4
 
+type ResponseData = {
+  success: boolean
+  error?: string
+  data?: Athlete
+}
+
 export default function NewAthlete() {
   const [athlete, setAthlete] = useState<Athlete>({
     userId: uuidv4(),
     sport: "",
     gender: "",
   })
+  const [error, setError] = useState<string | null>(null)
+  const [message, setMessage] = useState<string | null>(null)
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -29,15 +37,56 @@ export default function NewAthlete() {
       body: JSON.stringify(athlete),
     })
     if (response.ok) {
+      setError(null)
+      const responseData = (await response.json()) as ResponseData
+      setMessage(
+        `Utøver med bruker id ${responseData.data?.userId} ble lagt til.`,
+      )
       setAthlete({ userId: uuidv4(), sport: "", gender: "" })
+    } else {
+      const data = (await response.json()) as ResponseData
+
+      if (data.error) {
+        setMessage(null)
+        switch (data.error) {
+          case "Sport and gender are required":
+            setError("Feltene sport og kjønn må fylles ut.")
+            break
+          default:
+            setError(
+              "En ukjent feil har oppstått. Vennligst oppdater siden og prøv igjen.",
+            )
+            break
+        }
+      }
     }
   }
 
   return (
-    <Page title="Legg til utøver">
+    <Page title="Legg til utøver" backButtonLocation="/">
       <form onSubmit={handleSubmit} className="space-y-4">
+        {error && (
+          <div
+            className="relative rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
+            role="alert"
+          >
+            <strong className="font-bold">Feilmelding: </strong>
+            <span className="block sm:inline"> {error}</span>
+          </div>
+        )}
+
+        {message && (
+          <div
+            className="relative rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700"
+            role="alert"
+          >
+            <strong className="font-bold">Status: </strong>
+            <span className="block sm:inline"> {message}</span>
+          </div>
+        )}
+
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+          <label className="block font-medium text-gray-700 dark:text-gray-200">
             Bruker ID:
             <input
               type="text"
@@ -50,7 +99,7 @@ export default function NewAthlete() {
           </label>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+          <label className="block font-medium text-gray-700 dark:text-gray-200">
             Sport:
             <select
               name="sport"
@@ -70,7 +119,7 @@ export default function NewAthlete() {
           </label>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
+          <label className="block font-medium text-gray-700 dark:text-gray-200">
             Kjønn:
             <select
               name="gender"
@@ -87,7 +136,7 @@ export default function NewAthlete() {
         </div>
         <button
           type="submit"
-          className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
           Legg til utøver
         </button>

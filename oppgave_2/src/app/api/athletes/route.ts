@@ -36,6 +36,13 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   const { userId, gender, sport } = (await request.json()) as AthleteRequestBody
 
+  if (!gender || !sport) {
+    return NextResponse.json(
+      { success: false, error: "Sport and gender are required" },
+      { status: 400 },
+    )
+  }
+
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-assignment
     const newAthlete: Athlete = await prisma.athlete.create({
