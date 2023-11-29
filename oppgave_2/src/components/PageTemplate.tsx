@@ -18,7 +18,7 @@ export function Page({ title, backButtonLocation, children }: PageProps) {
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <span>Tilbake</span>
+              <title>Tilbake</title>
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
