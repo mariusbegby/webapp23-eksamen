@@ -1,8 +1,4 @@
-type Athlete = {
-  id: number
-  gender: string
-  sport: string
-}
+import type { Athlete } from "@/types"
 
 type AthleteListProps = {
   athletes: Athlete[]
@@ -10,12 +6,44 @@ type AthleteListProps = {
 
 export function AthleteList({ athletes }: AthleteListProps) {
   return (
-    <ul>
-      {athletes.map((athlete) => (
-        <li key={athlete.id}>
-          {athlete.gender} - {athlete.sport}
-        </li>
-      ))}
-    </ul>
+    <table className="min-w-full divide-y divide-gray-200 border">
+      <thead className="bg-gray-50">
+        <tr>
+          <th
+            scope="col"
+            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+          >
+            ID
+          </th>
+          <th
+            scope="col"
+            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+          >
+            Sport
+          </th>
+          <th
+            scope="col"
+            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
+          >
+            Kjønn
+          </th>
+        </tr>
+      </thead>
+      <tbody className="divide-y divide-gray-200 bg-white">
+        {athletes.map((athlete) => (
+          <tr key={athlete.id}>
+            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+              {athlete.id}
+            </td>
+            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+              {athlete.sport}
+            </td>
+            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+              {athlete.gender}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   )
 }
