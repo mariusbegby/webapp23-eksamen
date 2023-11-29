@@ -1,5 +1,11 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { Inter } from "next/font/google"
 import Image from "next/image"
 import Link from "next/link"
+
+const inter = Inter({ subsets: ["latin"] })
 
 const links = [
   {
@@ -25,6 +31,27 @@ const links = [
 ]
 
 export function Sidebar() {
+  const [theme, setTheme] = useState("light")
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setTheme(window.localStorage.getItem("theme") ?? "light")
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) {
+      return
+    }
+
+    document.body.className = `${inter.className} ${theme}`
+    window.localStorage.setItem("theme", theme)
+  }, [theme, mounted])
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light")
+  }
+
   return (
     <div className="hidden border-r bg-gray-100/40 dark:bg-gray-800/40 lg:block">
       <div className="flex h-[80px] items-center border-b px-6">
@@ -41,6 +68,7 @@ export function Sidebar() {
           <span className="text-2xl">Evolve</span>
         </Link>
       </div>
+
       <div className="flex-1 overflow-auto py-2">
         <nav className="grid items-start px-4 text-sm font-medium">
           {links.map((link) => (
@@ -53,6 +81,15 @@ export function Sidebar() {
             </Link>
           ))}
         </nav>
+
+        <div className="grid px-4">
+          <button
+            onClick={toggleTheme}
+            className="mt-4 rounded-md bg-gray-600 px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-gray-700 dark:bg-gray-300 dark:text-gray-800 dark:hover:bg-gray-400"
+          >
+            Endre til {theme === "light" ? "mørkt" : "lyst"} tema
+          </button>
+        </div>
       </div>
     </div>
   )

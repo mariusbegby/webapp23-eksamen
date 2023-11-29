@@ -8,8 +8,8 @@ import { Sidebar } from "@/components/Sidebar"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Evolve - Coach assistant",
-  description: "Evolve is a coach assistant for managing athletes.",
+  title: "Evolve - Athlete Manager",
+  description: "Evolve is a simple athlete manager for coaches.",
 }
 
 export default function RootLayout({
@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en">
+    <html lang="no">
       <body className={inter.className}>
         <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
           <Sidebar />

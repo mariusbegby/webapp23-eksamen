@@ -23,14 +23,12 @@ export default function NewAthlete() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // Send the athlete data to your API
     const response = await fetch("/api/athletes", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(athlete),
     })
     if (response.ok) {
-      // If the response is ok, clear the form
       setAthlete({ userId: uuidv4(), sport: "", gender: "" })
     }
   }
@@ -39,7 +37,7 @@ export default function NewAthlete() {
     <Page title="Legg til utøver">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
             Bruker ID:
             <input
               type="text"
@@ -47,20 +45,20 @@ export default function NewAthlete() {
               value={athlete.userId}
               onChange={handleChange}
               disabled
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-500 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
             />
           </label>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
             Sport:
             <select
               name="sport"
               value={athlete.sport}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
             >
-              <option value="">Velg sport</option>
+              <option value="">Velg type sport</option>
               <option value="Løping">Løping</option>
               <option value="Sykling">Sykling</option>
               <option value="Ski">Ski</option>
@@ -72,13 +70,13 @@ export default function NewAthlete() {
           </label>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-200">
             Kjønn:
             <select
               name="gender"
               value={athlete.gender}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
             >
               <option value="">Velg kjønn</option>
               <option value="Mann">Mann</option>

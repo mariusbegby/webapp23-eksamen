@@ -6,7 +6,6 @@ import Link from "next/link"
 
 import { AthleteList } from "@/components/AthleteList"
 import { Page } from "@/components/PageTemplate"
-import { Sidebar } from "@/components/Sidebar"
 
 type ResponseData = {
   success: boolean
