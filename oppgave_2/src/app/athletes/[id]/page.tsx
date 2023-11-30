@@ -43,6 +43,10 @@ export default function Athlete() {
         Endre utøver
       </Link>
 
+      <p>TODO: Opprett økt?</p>
+
+      <p>TODO: Opprett treningsmål/konkurranser?</p>
+
       {athlete && (
         <section className="grid grid-cols-1 gap-4 md:grid-cols-2 ">
           <div className="rounded-lg bg-indigo-50 p-4 shadow dark:bg-indigo-950">
@@ -78,6 +82,20 @@ export default function Athlete() {
                 Terskelfart: {athlete.meta?.speed} km/t
               </p>
             )}
+          </div>
+
+          <div className="rounded-lg bg-indigo-50 p-4 shadow dark:bg-indigo-950">
+            <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
+              Økter
+            </h2>
+            <p>TODO: Vis i tabell?</p>
+          </div>
+
+          <div className="rounded-lg bg-indigo-50 p-4 shadow dark:bg-indigo-950">
+            <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
+              Rapporter
+            </h2>
+            <p>TODO: Vis i tabell?</p>
           </div>
         </section>
       )}

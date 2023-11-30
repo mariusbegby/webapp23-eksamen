@@ -8,68 +8,73 @@ type AthleteListProps = {
 
 export function AthleteList({ athletes }: AthleteListProps) {
   return (
-    <table className="min-w-full divide-y divide-gray-200 border dark:divide-gray-700 dark:bg-gray-800">
-      <thead className="bg-gray-50 dark:bg-gray-900">
-        <tr>
-          <th
-            scope="col"
-            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
-          >
-            Bruker ID
-          </th>
-          <th
-            scope="col"
-            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
-          >
-            Sport
-          </th>
-          <th
-            scope="col"
-            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
-          >
-            Kjønn
-          </th>
-          <th
-            scope="col"
-            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
-          >
-            Egenskaper
-          </th>
-        </tr>
-      </thead>
-      <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-        {athletes.map((athlete) => (
-          <tr key={athlete.userId}>
-            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 transition-colors duration-200 ease-in-out hover:text-black dark:text-gray-300 dark:hover:text-white">
-              <Link href={`/athletes/${athlete.userId}`}>{athlete.userId}</Link>
-            </td>
-            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
-              {athlete.sport}
-            </td>
-            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
-              {athlete.gender}
-            </td>
-            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
-              {athlete.meta && (
-                <div className="flex items-center space-x-2">
-                  <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
-                    <FaHeartbeat className="mr-1 text-red-800" />
-                    {athlete.meta.heartrate}
-                  </span>
-                  <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                    <FaBolt className="mr-1 text-green-800" />
-                    {athlete.meta.watt}
-                  </span>
-                  <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                    <FaTachometerAlt className="mr-1 text-blue-800" />
-                    {athlete.meta.speed}
-                  </span>
-                </div>
-              )}
-            </td>
+    <>
+      <p>TODO: Search for ID</p>
+      <table className="min-w-full divide-y divide-gray-200 border dark:divide-gray-700 dark:bg-gray-800">
+        <thead className="bg-gray-50 dark:bg-gray-900">
+          <tr>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+            >
+              Bruker ID
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+            >
+              Sport
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+            >
+              Kjønn
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+            >
+              Egenskaper
+            </th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+          {athletes.map((athlete) => (
+            <tr key={athlete.userId}>
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 transition-colors duration-200 ease-in-out hover:text-black dark:text-gray-300 dark:hover:text-white">
+                <Link href={`/athletes/${athlete.userId}`}>
+                  {athlete.userId}
+                </Link>
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                {athlete.sport}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                {athlete.gender}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                {athlete.meta && (
+                  <div className="flex items-center space-x-2">
+                    <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                      <FaHeartbeat className="mr-1 text-red-800" />
+                      {athlete.meta.heartrate}
+                    </span>
+                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                      <FaBolt className="mr-1 text-green-800" />
+                      {athlete.meta.watt}
+                    </span>
+                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                      <FaTachometerAlt className="mr-1 text-blue-800" />
+                      {athlete.meta.speed}
+                    </span>
+                  </div>
+                )}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
   )
 }

@@ -16,6 +16,14 @@ const links = [
     href: "/athletes/new",
     label: "Legg til ny utøver",
   },
+  {
+    href: "/templates/new",
+    label: "Legg til ny mal",
+  },
+  {
+    href: "/questions/new",
+    label: "Legg til nytt spørsmål",
+  },
 ]
 
 export function Sidebar() {
