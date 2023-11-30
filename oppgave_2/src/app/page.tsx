@@ -35,7 +35,7 @@ export default function Dashboard() {
     <Page title="Dashbord">
       <div className="grid gap-6">
         <Link
-          href="/new-athlete"
+          href="/athletes/new"
           className="mb-2 rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
         >
           Legg til ny utøver

@@ -1,3 +1,4 @@
+import { FaBolt, FaHeartbeat, FaTachometerAlt } from "react-icons/fa"
 import type { Athlete } from "@/types"
 import Link from "next/link"
 
@@ -28,6 +29,12 @@ export function AthleteList({ athletes }: AthleteListProps) {
           >
             Kjønn
           </th>
+          <th
+            scope="col"
+            className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+          >
+            Egenskaper
+          </th>
         </tr>
       </thead>
       <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
@@ -41,6 +48,24 @@ export function AthleteList({ athletes }: AthleteListProps) {
             </td>
             <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
               {athlete.gender}
+            </td>
+            <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+              {athlete.meta && (
+                <div className="flex items-center space-x-2">
+                  <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                    <FaHeartbeat className="mr-1 text-red-800" />
+                    {athlete.meta.heartrate}
+                  </span>
+                  <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                    <FaBolt className="mr-1 text-green-800" />
+                    {athlete.meta.watt}
+                  </span>
+                  <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                    <FaTachometerAlt className="mr-1 text-blue-800" />
+                    {athlete.meta.speed}
+                  </span>
+                </div>
+              )}
             </td>
           </tr>
         ))}

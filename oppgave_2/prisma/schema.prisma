@@ -12,8 +12,19 @@ model Athlete {
   userId          String            @unique
   gender          String
   sport           String
+  metaId          Int               @unique
+  meta            Meta              @relation(fields: [metaId], references: [id])
   TrainingSession TrainingSession[]
   TrainingGoal    TrainingGoal[]
+  Activity        Activity[]
+}
+
+model Meta {
+  id        Int      @id @default(autoincrement())
+  heartrate Int
+  watt      Int
+  speed     Int
+  athlete   Athlete?
 }
 
 model TrainingSession {
@@ -34,4 +45,32 @@ model TrainingGoal {
   comment   String
   athleteId Int
   Athlete   Athlete  @relation(fields: [athleteId], references: [id])
+}
+
+model Activity {
+  id        Int        @id @default(autoincrement())
+  date      DateTime
+  name      String
+  tags      String
+  goalId    String
+  athleteId Int
+  Athlete   Athlete    @relation(fields: [athleteId], references: [id])
+  Question  Question[]
+  Interval  Interval[]
+}
+
+model Question {
+  id         String   @id @default(uuid())
+  question   String
+  type       String
+  activityId Int
+  Activity   Activity @relation(fields: [activityId], references: [id])
+}
+
+model Interval {
+  id         String   @id @default(uuid())
+  duration   Int
+  intensity  Int
+  activityId Int
+  Activity   Activity @relation(fields: [activityId], references: [id])
 }

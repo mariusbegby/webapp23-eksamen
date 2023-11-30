@@ -14,16 +14,23 @@ type AthleteRequestBody = {
   }
 }
 
-type Athlete = {
-  id: number
-  gender: string
-  sport: string
-}
+export async function GET(request: NextRequest) {
+  const id = request.nextUrl.pathname.split("/").pop()
 
-export async function GET() {
   try {
-    const athletes = await prisma.athlete.findMany({ include: { meta: true } })
-    return NextResponse.json({ success: true, data: athletes })
+    const athlete = await prisma.athlete.findUnique({
+      where: { userId: id },
+      include: { meta: true },
+    })
+
+    if (!athlete) {
+      return NextResponse.json(
+        { success: false, error: "No athlete found with this id" },
+        { status: 404 },
+      )
+    }
+
+    return NextResponse.json({ success: true, data: athlete })
   } catch (error: unknown) {
     let message = "An error occurred"
     if (error instanceof Error) {
@@ -36,7 +43,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function PUT(request: NextRequest) {
   const { userId, gender, sport, meta } =
     (await request.json()) as AthleteRequestBody
 
@@ -48,22 +55,23 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const newAthlete: Athlete = await prisma.athlete.create({
+    const updatedAthlete = await prisma.athlete.update({
+      where: { userId: userId },
       data: {
-        userId,
-        gender,
-        sport,
+        sport: sport,
+        gender: gender,
         meta: {
-          create: {
+          update: {
             heartrate: meta.heartrate,
             watt: meta.watt,
             speed: meta.speed,
           },
         },
       },
+      include: { meta: true },
     })
 
-    return NextResponse.json({ success: true, data: newAthlete })
+    return NextResponse.json({ success: true, data: updatedAthlete })
   } catch (error: unknown) {
     let message = "An error occurred"
     if (error instanceof Error) {

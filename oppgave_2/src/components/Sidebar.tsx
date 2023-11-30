@@ -13,20 +13,8 @@ const links = [
     label: "Dashbord",
   },
   {
-    href: "/reports",
-    label: "Rapporter",
-  },
-  {
-    href: "/new-athlete",
+    href: "/athletes/new",
     label: "Legg til ny utøver",
-  },
-  {
-    href: "/new-template",
-    label: "Legg til ny mal",
-  },
-  {
-    href: "/new-question",
-    label: "Legg til nytt spørsmål",
   },
 ]
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import type { Athlete } from "@/types"
+import Link from "next/link"
 import { v4 } from "uuid"
 
 import { Page } from "@/components/PageTemplate"
@@ -19,14 +20,27 @@ export default function NewAthlete() {
     userId: uuidv4(),
     sport: "",
     gender: "",
+    meta: {
+      heartrate: 0,
+      watt: 0,
+      speed: 0,
+    },
   })
   const [error, setError] = useState<string | null>(null)
-  const [message, setMessage] = useState<string | null>(null)
+  const [newAthleteId, setNewAthleteId] = useState<string | undefined | null>(
+    null,
+  )
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    setAthlete({ ...athlete, [e.target.name]: e.target.value })
+    const value =
+      e.target.name === "heartrate" ||
+      e.target.name === "watt" ||
+      e.target.name === "speed"
+        ? parseInt(e.target.value, 10)
+        : e.target.value
+    setAthlete({ ...athlete, [e.target.name]: value })
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -39,15 +53,22 @@ export default function NewAthlete() {
     if (response.ok) {
       setError(null)
       const responseData = (await response.json()) as ResponseData
-      setMessage(
-        `Utøver med bruker id ${responseData.data?.userId} ble lagt til.`,
-      )
-      setAthlete({ userId: uuidv4(), sport: "", gender: "" })
+      setNewAthleteId(responseData.data?.userId)
+      setAthlete({
+        userId: uuidv4(),
+        sport: "",
+        gender: "",
+        meta: {
+          heartrate: 0,
+          watt: 0,
+          speed: 0,
+        },
+      })
     } else {
       const data = (await response.json()) as ResponseData
 
       if (data.error) {
-        setMessage(null)
+        setNewAthleteId(null)
         switch (data.error) {
           case "Sport and gender are required":
             setError("Feltene sport og kjønn må fylles ut.")
@@ -75,13 +96,22 @@ export default function NewAthlete() {
           </div>
         )}
 
-        {message && (
+        {newAthleteId && (
           <div
             className="relative rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700"
             role="alert"
           >
             <strong className="font-bold">Status: </strong>
-            <span className="block sm:inline"> {message}</span>
+            <span className="block sm:inline">
+              Utøver med bruker id{" "}
+              <Link
+                href={`/athletes/${newAthleteId}`}
+                className="text-green-600 hover:text-green-900"
+              >
+                {newAthleteId}
+              </Link>{" "}
+              ble lagt til.
+            </span>
           </div>
         )}
 
@@ -100,7 +130,7 @@ export default function NewAthlete() {
         </div>
         <div>
           <label className="block font-medium text-gray-700 dark:text-gray-200">
-            Sport:
+            Sport: <span className="text-red-600">*</span>
             <select
               name="sport"
               value={athlete.sport}
@@ -120,7 +150,7 @@ export default function NewAthlete() {
         </div>
         <div>
           <label className="block font-medium text-gray-700 dark:text-gray-200">
-            Kjønn:
+            Kjønn: <span className="text-red-600">*</span>
             <select
               name="gender"
               value={athlete.gender}
@@ -134,6 +164,49 @@ export default function NewAthlete() {
             </select>
           </label>
         </div>
+
+        <div className="flex space-x-4">
+          <div className="flex-1">
+            <label className="block font-medium text-gray-700 dark:text-gray-200">
+              Hjertefrekvens:
+              <input
+                type="number"
+                placeholder="slag pr. minutt"
+                name="heartrate"
+                value={athlete.meta?.heartrate ?? 0}
+                onChange={handleChange}
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+              />
+            </label>
+          </div>
+          <div className="flex-1">
+            <label className="block font-medium text-gray-700 dark:text-gray-200">
+              Terkselwatt:
+              <input
+                type="number"
+                placeholder="watt"
+                name="watt"
+                value={athlete.meta?.watt ?? 0}
+                onChange={handleChange}
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+              />
+            </label>
+          </div>
+          <div className="flex-1">
+            <label className="block font-medium text-gray-700 dark:text-gray-200">
+              Terskelfart:
+              <input
+                type="number"
+                placeholder="km/t"
+                name="speed"
+                value={athlete.meta?.speed ?? 0}
+                onChange={handleChange}
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+              />
+            </label>
+          </div>
+        </div>
+
         <button
           type="submit"
           className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
