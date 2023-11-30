@@ -26,6 +26,7 @@ export default function NewAthlete() {
       speed: 0,
     },
   })
+
   const [error, setError] = useState<string | null>(null)
   const [newAthleteId, setNewAthleteId] = useState<string | undefined | null>(
     null,
@@ -40,7 +41,30 @@ export default function NewAthlete() {
       e.target.name === "speed"
         ? parseInt(e.target.value, 10)
         : e.target.value
-    setAthlete({ ...athlete, [e.target.name]: value })
+    setAthlete((prevAthlete) => {
+      if (
+        e.target.name === "heartrate" ||
+        e.target.name === "watt" ||
+        e.target.name === "speed"
+      ) {
+        return {
+          ...prevAthlete,
+          meta: {
+            ...(prevAthlete.meta ?? {
+              heartrate: 0,
+              watt: 0,
+              speed: 0,
+            }),
+            [e.target.name]: value,
+          },
+        }
+      } else {
+        return {
+          ...prevAthlete,
+          [e.target.name]: value,
+        }
+      }
+    })
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
