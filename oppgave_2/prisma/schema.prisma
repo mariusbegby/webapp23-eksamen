@@ -19,12 +19,24 @@ model Athlete {
   Activity        Activity[]
 }
 
+model IntensityZone {
+  id        Int    @id @default(autoincrement())
+  type      String
+  zone      Int
+  intensity Int
+  metaId    Int
+  Meta      Meta   @relation(fields: [metaId], references: [id])
+
+  @@unique([metaId, type, zone])
+}
+
 model Meta {
-  id        Int      @id @default(autoincrement())
-  heartrate Int
-  watt      Int
-  speed     Int
-  athlete   Athlete?
+  id             Int             @id @default(autoincrement())
+  heartrate      Int
+  watt           Int
+  speed          Int
+  athlete        Athlete?
+  intensityZones IntensityZone[]
 }
 
 model TrainingSession {

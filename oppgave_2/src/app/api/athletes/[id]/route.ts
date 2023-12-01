@@ -1,3 +1,4 @@
+import type { Athlete, IntensityZone } from "@/types"
 import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
@@ -43,6 +44,47 @@ export async function GET(request: NextRequest) {
   }
 }
 
+function generateIntensityZones(athlete: Athlete) {
+  const zones: IntensityZone[] = []
+
+  if (!athlete.meta.intensityZones) return
+
+  const percentages = [0.5, 0.6, 0.7, 0.8, 0.9]
+
+  for (const zone of athlete.meta.intensityZones) {
+    percentages.forEach((percentage, index) => {
+      if (!athlete.meta.heartrate || !athlete.meta.watt || !athlete.meta.speed)
+        return
+
+      switch (zone.type) {
+        case "heartrate":
+          zones.push({
+            type: zone.type,
+            zone: index + 1,
+            intensity: athlete.meta.heartrate * percentage,
+          })
+          break
+        case "watt":
+          zones.push({
+            type: zone.type,
+            zone: index + 1,
+            intensity: athlete.meta.watt * percentage,
+          })
+          break
+        case "speed":
+          zones.push({
+            type: zone.type,
+            zone: index + 1,
+            intensity: athlete.meta.speed * percentage,
+          })
+          break
+      }
+    })
+  }
+
+  return zones
+}
+
 export async function PUT(request: NextRequest) {
   const { userId, gender, sport, meta } =
     (await request.json()) as AthleteRequestBody
@@ -55,7 +97,7 @@ export async function PUT(request: NextRequest) {
   }
 
   try {
-    const updatedAthlete = await prisma.athlete.update({
+    const updatedAthlete: Athlete = await prisma.athlete.update({
       where: { userId: userId },
       data: {
         sport: sport,
@@ -68,8 +110,32 @@ export async function PUT(request: NextRequest) {
           },
         },
       },
-      include: { meta: true },
+      include: {
+        meta: {
+          include: {
+            intensityZones: true,
+          },
+        },
+      },
     })
+
+    const zones = generateIntensityZones(updatedAthlete)
+
+    if (!zones)
+      return NextResponse.json({ success: true, data: updatedAthlete })
+
+    for (const zone of zones) {
+      await prisma.intensityZone.update({
+        where: {
+          metaId_type_zone: {
+            metaId: updatedAthlete.meta.id,
+            type: zone.type,
+            zone: zone.zone,
+          },
+        },
+        data: { intensity: zone.intensity },
+      })
+    }
 
     return NextResponse.json({ success: true, data: updatedAthlete })
   } catch (error: unknown) {
