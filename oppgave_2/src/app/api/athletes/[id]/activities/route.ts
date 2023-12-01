@@ -4,6 +4,7 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 
 type Interval = {
+  type: string
   duration: string
   intensity: string
 }
@@ -66,6 +67,7 @@ export async function POST(request: NextRequest) {
         },
         intervals: {
           create: intervals.map((interval) => ({
+            type: interval.type,
             duration: parseInt(interval.duration),
             intensity: parseInt(interval.intensity),
           })),

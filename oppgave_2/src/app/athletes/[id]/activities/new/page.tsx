@@ -7,6 +7,8 @@ import { usePathname } from "next/navigation"
 import { Page } from "@/components/PageTemplate"
 
 type Interval = {
+  id?: string
+  type: string
   duration: string
   intensity: string
 }
@@ -59,20 +61,21 @@ export default function NewActivity() {
     questions: [],
     intervals: [
       {
+        type: "heartrate",
         duration: "",
         intensity: "1",
       },
     ],
   })
 
-  const [intensityZones, setZones] = useState<IntensityZone[] | undefined>([])
+  const [intensityZones, setZones] = useState<IntensityZone[]>([])
 
   useEffect(() => {
     const fetchAthleteData = async () => {
       const response = await fetch(`/api/athletes/${id}`)
       const data = (await response.json()) as ResponseDataAthlete
 
-      if (data.success) {
+      if (data.success && data.data.meta.intensityZones) {
         setZones(data.data.meta.intensityZones)
       } else {
         console.error(data.error)
@@ -136,6 +139,7 @@ export default function NewActivity() {
         intervals: [
           ...prevForm.intervals,
           ...Array<Interval>(newNumIntervals - prevForm.intervals.length).fill({
+            type: "heartrate",
             duration: "",
             intensity: "1",
           }),
@@ -193,15 +197,30 @@ export default function NewActivity() {
     field: keyof Interval,
   ) => {
     const newIntervals = [...form.intervals]
-    newIntervals[index] = {
-      ...newIntervals[index],
-      [field]: e.target.value,
-    }
-    setForm((prevForm) => ({ ...prevForm, intervals: newIntervals }))
-  }
 
-  if (!intensityZones) {
-    return <p>Loading...</p>
+    if (field === "intensity") {
+      const interval = intensityZones.find(
+        (zone) => zone.id === parseInt(e.target.value, 10),
+      )
+
+      if (!interval) {
+        return
+      }
+
+      newIntervals[index] = {
+        ...newIntervals[index],
+        id: interval.id.toString(),
+        intensity: interval.intensity.toString(),
+        type: interval.type,
+      }
+    } else {
+      newIntervals[index] = {
+        ...newIntervals[index],
+        [field]: e.target.value,
+      }
+    }
+
+    setForm((prevForm) => ({ ...prevForm, intervals: newIntervals }))
   }
 
   const intensityOptions = intensityZones.map((intensityZone, index) => {
@@ -228,7 +247,7 @@ export default function NewActivity() {
 
     return {
       label: `${type}: Sone ${intensityZone.zone} - ${intensityZone.intensity} ${unit}`,
-      value: intensityZone.zone,
+      value: intensityZone.id,
       key: index,
     }
   })
@@ -434,7 +453,7 @@ export default function NewActivity() {
                 <label className="block font-medium text-gray-700 dark:text-gray-200">
                   Intervall {index + 1} intensitetssone:
                   <select
-                    value={interval.intensity}
+                    value={interval.id}
                     onChange={(e) => {
                       handleIntervalChange(e, index, "intensity")
                     }}

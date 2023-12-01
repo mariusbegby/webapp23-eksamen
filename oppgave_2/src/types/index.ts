@@ -30,6 +30,7 @@ type Meta = {
 }
 
 export type IntensityZone = {
+  id: number
   type: string
   zone: number
   intensity: number

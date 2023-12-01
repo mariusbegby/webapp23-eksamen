@@ -70,6 +70,7 @@ model Question {
 
 model Interval {
   id         String   @id @default(uuid())
+  type       String
   duration   Int
   intensity  Int
   activityId Int

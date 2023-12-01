@@ -140,7 +140,10 @@ export async function PUT(request: NextRequest) {
             zone: zone.zone,
           },
         },
-        data: { intensity: zone.intensity },
+        data: {
+          intensity: zone.intensity,
+          type: zone.type,
+        },
       })
     }
 
