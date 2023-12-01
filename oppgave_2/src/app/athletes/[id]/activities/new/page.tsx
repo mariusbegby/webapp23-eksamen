@@ -129,13 +129,15 @@ export default function NewActivity() {
     }
   }
 
-  const handleGeneralInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleGeneralInfoChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     const { name, value } = e.target
     setForm((prevForm) => ({ ...prevForm, [name]: value }))
   }
 
   const handleQuestionChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLSelectElement>,
     index: number,
   ) => {
     const newQuestions = [...form.questions]
@@ -144,13 +146,14 @@ export default function NewActivity() {
   }
 
   const handleIntervalChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     index: number,
+    field: keyof Interval,
   ) => {
     const newIntervals = [...form.intervals]
     newIntervals[index] = {
       ...newIntervals[index],
-      [e.target.name]: e.target.value,
+      [field]: e.target.value,
     }
     setForm((prevForm) => ({ ...prevForm, intervals: newIntervals }))
   }
@@ -185,6 +188,7 @@ export default function NewActivity() {
               <input
                 type="text"
                 name="name"
+                placeholder="Navn på økt"
                 value={form.name}
                 onChange={handleGeneralInfoChange}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
@@ -193,10 +197,11 @@ export default function NewActivity() {
           </div>
           <div>
             <label className="block font-medium text-gray-700 dark:text-gray-200">
-              Tags (separer med komma):
+              Tagger (separer med komma):
               <input
                 type="text"
                 name="tags"
+                placeholder="Tagger for økten"
                 value={form.tags}
                 onChange={handleGeneralInfoChange}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
@@ -206,13 +211,21 @@ export default function NewActivity() {
           <div>
             <label className="block font-medium text-gray-700 dark:text-gray-200">
               Type aktivitet:
-              <input
-                type="text"
+              <select
                 name="type"
                 value={form.type}
                 onChange={handleGeneralInfoChange}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
-              />
+              >
+                <option value="">Velg type sport</option>
+                <option value="Løping">Løping</option>
+                <option value="Sykling">Sykling</option>
+                <option value="Ski">Ski</option>
+                <option value="Triatlon">Triatlon</option>
+                <option value="Svømming">Svømming</option>
+                <option value="Styrke">Styrke</option>
+                <option value="Annet">Annet</option>
+              </select>
             </label>
           </div>
         </fieldset>
@@ -232,18 +245,29 @@ export default function NewActivity() {
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
             />
           </label>
-          {form.questions.map((question, index) => (
+          {form.questions.map((questionId, index) => (
             <div key={index}>
               <label className="block font-medium text-gray-700 dark:text-gray-200">
                 Spørsmål {index + 1}:
-                <input
-                  type="text"
-                  value={question}
+                <select
+                  value={questionId}
                   onChange={(e) => {
                     handleQuestionChange(e, index)
                   }}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
-                />
+                >
+                  {questions.map((question) => (
+                    <option key={question.id} value={question.id}>
+                      {question.question} (
+                      {question.type === "radio"
+                        ? "Skala 1-10"
+                        : question.type === "radio:emoji"
+                        ? "☹️ / 🙂 / 😁"
+                        : "Tekst"}
+                      )
+                    </option>
+                  ))}
+                </select>
               </label>
             </div>
           ))}
@@ -272,8 +296,9 @@ export default function NewActivity() {
                   <input
                     type="text"
                     value={interval.duration}
+                    placeholder="Varighet i minutter"
                     onChange={(e) => {
-                      handleIntervalChange(e, index)
+                      handleIntervalChange(e, index, "duration")
                     }}
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
                   />
@@ -282,14 +307,19 @@ export default function NewActivity() {
               <div className="flex-1">
                 <label className="block font-medium text-gray-700 dark:text-gray-200">
                   Intervall {index + 1} Intensitet:
-                  <input
-                    type="text"
+                  <select
                     value={interval.intensity}
                     onChange={(e) => {
-                      handleIntervalChange(e, index)
+                      handleIntervalChange(e, index, "intensity")
                     }}
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
-                  />
+                  >
+                    <option value="50">50%</option>
+                    <option value="60">60%</option>
+                    <option value="70">70%</option>
+                    <option value="80">80%</option>
+                    <option value="90">90%</option>
+                  </select>
                 </label>
               </div>
             </div>
