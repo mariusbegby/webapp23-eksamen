@@ -36,81 +36,97 @@ export default function NewActivity() {
   const [numIntervals, setNumIntervals] = useState(1)
   const [numQuestions, setNumQuestions] = useState(1)
 
-  const handleNumIntervalsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newNumIntervals = parseInt(e.target.value, 10)
-    setNumIntervals(newNumIntervals)
-    setForm((prevForm) => {
-      if (newNumIntervals > prevForm.intervals.length) {
-        return {
-          ...prevForm,
-          intervals: [
-            ...prevForm.intervals,
-            ...Array(newNumIntervals - prevForm.intervals.length).fill({
-              duration: "",
-              intensity: "",
-            }),
-          ],
-        }
-      } else {
-        return {
-          ...prevForm,
-          intervals: prevForm.intervals.slice(0, newNumIntervals),
-        }
-      }
-    })
-  }
-
   const handleNumQuestionsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newNumQuestions = parseInt(e.target.value, 10)
-    setNumQuestions(newNumQuestions)
-    setForm((prevForm) => {
-      if (newNumQuestions > prevForm.questions.length) {
-        return {
-          ...prevForm,
-          questions: [
-            ...prevForm.questions,
-            ...Array(newNumQuestions - prevForm.questions.length).fill(""),
-          ],
-        }
-      } else {
-        return {
-          ...prevForm,
-          questions: prevForm.questions.slice(0, newNumQuestions),
-        }
-      }
-    })
+    let value = e.target.value
+    if (value === "") {
+      value = "0"
+    } else {
+      let numValue = parseInt(value)
+      numValue = numValue > 10 ? 10 : numValue
+      value = numValue.toString()
+    }
+    setNumQuestions(parseInt(value))
+    setForm((prevForm) => updateQuestions(prevForm, parseInt(value)))
   }
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-    index?: number,
-    isInterval?: boolean,
-    isIntensity?: boolean,
-  ) => {
-    if (isInterval) {
-      const newIntervals = [...form.intervals]
-      if (isIntensity) {
-        newIntervals[index!].intensity = e.target.value
-      } else {
-        newIntervals[index!].duration = e.target.value
-      }
-      setForm((prevForm) => ({
-        ...prevForm,
-        intervals: newIntervals,
-      }))
-    } else if (index !== undefined) {
-      const newQuestions = [...form.questions]
-      newQuestions[index] = e.target.value
-      setForm((prevForm) => ({
-        ...prevForm,
-        questions: newQuestions,
-      }))
-    } else {
-      setForm((prevForm) => ({
-        ...prevForm,
-        [e.target.name]: e.target.value,
-      }))
+  const handleNumIntervalsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let newNumIntervals = parseInt(e.target.value, 10)
+    if (isNaN(newNumIntervals)) {
+      newNumIntervals = 0
+    } else if (newNumIntervals > 10) {
+      newNumIntervals = 10
     }
+    setNumIntervals(newNumIntervals)
+    setForm((prevForm) => updateIntervals(prevForm, newNumIntervals))
+  }
+
+  const updateIntervals = (
+    prevForm: ActivityForm,
+    newNumIntervals: number,
+  ): ActivityForm => {
+    if (newNumIntervals > prevForm.intervals.length) {
+      return {
+        ...prevForm,
+        intervals: [
+          ...prevForm.intervals,
+          ...Array(newNumIntervals - prevForm.intervals.length).fill({
+            duration: "",
+            intensity: "",
+          }),
+        ],
+      }
+    } else {
+      return {
+        ...prevForm,
+        intervals: prevForm.intervals.slice(0, newNumIntervals),
+      }
+    }
+  }
+
+  const updateQuestions = (
+    prevForm: ActivityForm,
+    newNumQuestions: number,
+  ): ActivityForm => {
+    if (newNumQuestions > prevForm.questions.length) {
+      return {
+        ...prevForm,
+        questions: [
+          ...prevForm.questions,
+          ...Array(newNumQuestions - prevForm.questions.length).fill(""),
+        ],
+      }
+    } else {
+      return {
+        ...prevForm,
+        questions: prevForm.questions.slice(0, newNumQuestions),
+      }
+    }
+  }
+
+  const handleGeneralInfoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setForm((prevForm) => ({ ...prevForm, [name]: value }))
+  }
+
+  const handleQuestionChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number,
+  ) => {
+    const newQuestions = [...form.questions]
+    newQuestions[index] = e.target.value
+    setForm((prevForm) => ({ ...prevForm, questions: newQuestions }))
+  }
+
+  const handleIntervalChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number,
+  ) => {
+    const newIntervals = [...form.intervals]
+    newIntervals[index] = {
+      ...newIntervals[index],
+      [e.target.name]: e.target.value,
+    }
+    setForm((prevForm) => ({ ...prevForm, intervals: newIntervals }))
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -132,7 +148,7 @@ export default function NewActivity() {
                 type="date"
                 name="date"
                 value={form.date}
-                onChange={handleChange}
+                onChange={handleGeneralInfoChange}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
               />
             </label>
@@ -144,7 +160,7 @@ export default function NewActivity() {
                 type="text"
                 name="name"
                 value={form.name}
-                onChange={handleChange}
+                onChange={handleGeneralInfoChange}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
               />
             </label>
@@ -156,7 +172,7 @@ export default function NewActivity() {
                 type="text"
                 name="tags"
                 value={form.tags}
-                onChange={handleChange}
+                onChange={handleGeneralInfoChange}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
               />
             </label>
@@ -168,12 +184,13 @@ export default function NewActivity() {
                 type="text"
                 name="type"
                 value={form.type}
-                onChange={handleChange}
+                onChange={handleGeneralInfoChange}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
               />
             </label>
           </div>
         </fieldset>
+
         <fieldset className="mb-8 space-y-4">
           <legend className="text-lg font-medium text-gray-900 dark:text-gray-200">
             Spørsmål
@@ -181,8 +198,9 @@ export default function NewActivity() {
           <label className="block font-medium text-gray-700 dark:text-gray-200">
             Antall spørsmål:
             <input
-              type="number"
+              type="text"
               min="1"
+              max="10"
               value={numQuestions}
               onChange={handleNumQuestionsChange}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
@@ -196,7 +214,7 @@ export default function NewActivity() {
                   type="text"
                   value={question}
                   onChange={(e) => {
-                    handleChange(e, index)
+                    handleQuestionChange(e, index)
                   }}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
                 />
@@ -204,6 +222,7 @@ export default function NewActivity() {
             </div>
           ))}
         </fieldset>
+
         <fieldset className="space-y-4">
           <legend className="text-lg font-medium text-gray-900 dark:text-gray-200">
             Intervaller
@@ -211,8 +230,9 @@ export default function NewActivity() {
           <label className="block font-medium text-gray-700 dark:text-gray-200">
             Antall intervaller:
             <input
-              type="number"
+              type="text"
               min="1"
+              max="10"
               value={numIntervals}
               onChange={handleNumIntervalsChange}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
@@ -227,7 +247,7 @@ export default function NewActivity() {
                     type="text"
                     value={interval.duration}
                     onChange={(e) => {
-                      handleChange(e, index, true)
+                      handleIntervalChange(e, index)
                     }}
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
                   />
@@ -240,7 +260,7 @@ export default function NewActivity() {
                     type="text"
                     value={interval.intensity}
                     onChange={(e) => {
-                      handleChange(e, index, true, true)
+                      handleIntervalChange(e, index)
                     }}
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
                   />
