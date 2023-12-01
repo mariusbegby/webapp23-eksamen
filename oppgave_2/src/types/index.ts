@@ -10,6 +10,7 @@ export type Athlete = {
 }
 
 export type Question = {
+  id: string
   question: string
   type: string
 }

@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import type { Question } from "@/types"
 import { usePathname } from "next/navigation"
 
 import { Page } from "@/components/PageTemplate"
@@ -19,7 +20,15 @@ type ActivityForm = {
   intervals: Interval[]
 }
 
+type ResponseData = {
+  success: boolean
+  data: Question[]
+  error?: string
+}
+
 export default function NewActivity() {
+  const [questions, setQuestions] = useState<Question[]>([])
+
   const pathname = usePathname()
   const pathParts = pathname.split("/")
   const id = pathParts[pathParts.length - 3]
@@ -35,6 +44,21 @@ export default function NewActivity() {
 
   const [numIntervals, setNumIntervals] = useState(1)
   const [numQuestions, setNumQuestions] = useState(1)
+
+  useEffect(() => {
+    const fetchQuestsions = async () => {
+      const response = await fetch("/api/questions")
+      const data = (await response.json()) as ResponseData
+
+      if (data.success) {
+        setQuestions(data.data)
+      } else {
+        console.error(data.error)
+      }
+    }
+
+    fetchQuestsions().catch(console.error)
+  }, [])
 
   const handleNumQuestionsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value
@@ -69,7 +93,7 @@ export default function NewActivity() {
         ...prevForm,
         intervals: [
           ...prevForm.intervals,
-          ...Array(newNumIntervals - prevForm.intervals.length).fill({
+          ...Array<Interval>(newNumIntervals - prevForm.intervals.length).fill({
             duration: "",
             intensity: "",
           }),
@@ -92,7 +116,9 @@ export default function NewActivity() {
         ...prevForm,
         questions: [
           ...prevForm.questions,
-          ...Array(newNumQuestions - prevForm.questions.length).fill(""),
+          ...Array<string>(newNumQuestions - prevForm.questions.length).fill(
+            "",
+          ),
         ],
       }
     } else {
