@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import type { Question } from "@/types"
+import type { Athlete, IntensityZone, Question } from "@/types"
 import { usePathname } from "next/navigation"
 
 import { Page } from "@/components/PageTemplate"
@@ -20,44 +20,86 @@ type ActivityForm = {
   intervals: Interval[]
 }
 
-type ResponseData = {
+type ResponseDataNewActivity = {
+  success: boolean
+  error?: string
+  data?: JSON
+}
+
+type ResponseDataQuestions = {
   success: boolean
   data: Question[]
   error?: string
 }
 
+type ResponseDataAthlete = {
+  success: boolean
+  data: Athlete
+  error?: string
+}
+
 export default function NewActivity() {
+  const [error, setError] = useState<string | null>(null)
+  const [message, setMessage] = useState<string | null>(null)
+
   const [questions, setQuestions] = useState<Question[]>([])
 
   const pathname = usePathname()
   const pathParts = pathname.split("/")
   const id = pathParts[pathParts.length - 3]
 
-  const [form, setForm] = useState<ActivityForm>({
-    date: new Date().toISOString().split("T")[0],
-    name: "",
-    tags: "",
-    type: "",
-    questions: [""],
-    intervals: [{ duration: "", intensity: "" }],
-  })
-
   const [numIntervals, setNumIntervals] = useState(1)
   const [numQuestions, setNumQuestions] = useState(1)
 
+  const [form, setForm] = useState<ActivityForm>({
+    date: "",
+    name: "",
+    tags: "",
+    type: "",
+    questions: [],
+    intervals: [
+      {
+        duration: "",
+        intensity: "1",
+      },
+    ],
+  })
+
+  const [intensityZones, setZones] = useState<IntensityZone[] | undefined>([])
+
   useEffect(() => {
-    const fetchQuestsions = async () => {
-      const response = await fetch("/api/questions")
-      const data = (await response.json()) as ResponseData
+    const fetchAthleteData = async () => {
+      const response = await fetch(`/api/athletes/${id}`)
+      const data = (await response.json()) as ResponseDataAthlete
 
       if (data.success) {
-        setQuestions(data.data)
+        setZones(data.data.meta.intensityZones)
       } else {
         console.error(data.error)
       }
     }
 
-    fetchQuestsions().catch(console.error)
+    fetchAthleteData().catch(console.error)
+  }, [id])
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      const response = await fetch("/api/questions")
+      const data = (await response.json()) as ResponseDataQuestions
+
+      if (data.success) {
+        setQuestions(data.data)
+        // Update form state with first question as default
+        setForm((prevForm) => ({
+          ...prevForm,
+          questions: [data.data[0].id],
+        }))
+      } else {
+        console.error(data.error)
+      }
+    }
+
+    fetchQuestions().catch(console.error)
   }, [])
 
   const handleNumQuestionsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -95,7 +137,7 @@ export default function NewActivity() {
           ...prevForm.intervals,
           ...Array<Interval>(newNumIntervals - prevForm.intervals.length).fill({
             duration: "",
-            intensity: "",
+            intensity: "1",
           }),
         ],
       }
@@ -158,16 +200,100 @@ export default function NewActivity() {
     setForm((prevForm) => ({ ...prevForm, intervals: newIntervals }))
   }
 
+  if (!intensityZones) {
+    return <p>Loading...</p>
+  }
+
+  const intensityOptions = intensityZones.map((intensityZone, index) => {
+    let type
+    let unit
+
+    switch (intensityZone.type) {
+      case "heartrate":
+        type = "Hjertefrekvens"
+        unit = "slag pr. minutt"
+        break
+      case "speed":
+        type = "Fart"
+        unit = "km/t"
+        break
+      case "watt":
+        type = "Watt"
+        unit = "W"
+        break
+      default:
+        type = intensityZone.type
+        unit = ""
+    }
+
+    return {
+      label: `${type}: Sone ${intensityZone.zone} - ${intensityZone.intensity} ${unit}`,
+      value: intensityZone.zone,
+      key: index,
+    }
+  })
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // TODO: Send form data to server
+    console.log(form)
+
+    const response = await fetch(`/api/athletes/${id}/activities`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(form),
+    })
+
+    if (response.ok) {
+      setError(null)
+      setMessage("Økten ble opprettet!")
+      const responseData = (await response.json()) as ResponseDataNewActivity
+      console.log(responseData)
+    } else {
+      const data = (await response.json()) as ResponseDataNewActivity
+
+      if (data.error) {
+        setMessage(null)
+        switch (data.error) {
+          case "Bla bla bla":
+            setError("Bla bla bla")
+            break
+          default:
+            setError(
+              "En ukjent feil har oppstått. Vennligst oppdater siden og prøv igjen.",
+            )
+            break
+        }
+      }
+    }
   }
 
   return (
     <Page title="Opprett treningsøkt" backButtonLocation={`/athletes/${id}`}>
       <form onSubmit={handleSubmit}>
+        {error && (
+          <div
+            className="relative mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
+            role="alert"
+          >
+            <strong className="font-bold">Feilmelding: </strong>
+            <span className="block sm:inline"> {error}</span>
+          </div>
+        )}
+
+        {message && (
+          <div
+            className="relative mt-4 rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700"
+            role="alert"
+          >
+            <strong className="font-bold">Status: </strong>
+            <span className="block sm:inline"> {message}</span>
+          </div>
+        )}
+
         <fieldset className="mb-8 space-y-4">
-          <legend className="text-lg font-medium text-gray-900 dark:text-gray-200">
+          <legend className="text-lg font-bold text-gray-900 dark:text-gray-200">
             Generell informasjon
           </legend>
           <div>
@@ -231,7 +357,7 @@ export default function NewActivity() {
         </fieldset>
 
         <fieldset className="mb-8 space-y-4">
-          <legend className="text-lg font-medium text-gray-900 dark:text-gray-200">
+          <legend className="text-lg font-bold text-gray-900 dark:text-gray-200">
             Spørsmål
           </legend>
           <label className="block font-medium text-gray-700 dark:text-gray-200">
@@ -274,7 +400,7 @@ export default function NewActivity() {
         </fieldset>
 
         <fieldset className="space-y-4">
-          <legend className="text-lg font-medium text-gray-900 dark:text-gray-200">
+          <legend className="text-lg font-bold text-gray-900 dark:text-gray-200">
             Intervaller
           </legend>
           <label className="block font-medium text-gray-700 dark:text-gray-200">
@@ -292,7 +418,7 @@ export default function NewActivity() {
             <div key={index} className="flex space-x-4">
               <div className="flex-1">
                 <label className="block font-medium text-gray-700 dark:text-gray-200">
-                  Intervall {index + 1} Varighet:
+                  Intervall {index + 1} varighet:
                   <input
                     type="text"
                     value={interval.duration}
@@ -306,7 +432,7 @@ export default function NewActivity() {
               </div>
               <div className="flex-1">
                 <label className="block font-medium text-gray-700 dark:text-gray-200">
-                  Intervall {index + 1} Intensitet:
+                  Intervall {index + 1} intensitetssone:
                   <select
                     value={interval.intensity}
                     onChange={(e) => {
@@ -314,11 +440,11 @@ export default function NewActivity() {
                     }}
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
                   >
-                    <option value="50">50%</option>
-                    <option value="60">60%</option>
-                    <option value="70">70%</option>
-                    <option value="80">80%</option>
-                    <option value="90">90%</option>
+                    {intensityOptions.map((option) => (
+                      <option key={option.key} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
                   </select>
                 </label>
               </div>
