@@ -17,6 +17,35 @@ type ActivityRequestBody = {
   intervals: Interval[]
 }
 
+export async function GET(request: NextRequest) {
+  const athleteId = request.nextUrl.pathname.split("/")[3]
+
+  try {
+    const activities = await prisma.activity.findMany({
+      where: {
+        Athlete: {
+          userId: athleteId,
+        },
+      },
+      include: {
+        questions: true,
+        intervals: true,
+      },
+    })
+
+    return NextResponse.json({ success: true, data: activities })
+  } catch (error: unknown) {
+    let message = "An error occurred"
+    if (error instanceof Error) {
+      message = error.message
+    }
+    return NextResponse.json(
+      { success: false, error: message },
+      { status: 400 },
+    )
+  }
+}
+
 export async function POST(request: NextRequest) {
   const { date, name, tags, type, questions, intervals } =
     (await request.json()) as ActivityRequestBody

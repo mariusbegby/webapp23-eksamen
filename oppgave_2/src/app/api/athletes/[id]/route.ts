@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
             intensityZones: true,
           },
         },
+        activities: true,
       },
     })
 

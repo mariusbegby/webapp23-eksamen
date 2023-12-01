@@ -3,6 +3,22 @@ export type Athlete = {
   gender: string
   sport: string
   meta: Meta
+  activities: Activity[]
+}
+
+type Activity = {
+  id: number
+  date: string
+  name: string
+  tags: string
+  type: string
+  intervals: Interval[]
+  questions: Question[]
+}
+
+type Interval = {
+  duration: number
+  intensity: number
 }
 
 type Meta = {

@@ -8,15 +8,14 @@ datasource db {
 }
 
 model Athlete {
-  id              Int               @id @default(autoincrement())
-  userId          String            @unique
-  gender          String
-  sport           String
-  metaId          Int               @unique
-  meta            Meta              @relation(fields: [metaId], references: [id])
-  TrainingSession TrainingSession[]
-  TrainingGoal    TrainingGoal[]
-  Activity        Activity[]
+  id            Int            @id @default(autoincrement())
+  userId        String         @unique
+  gender        String
+  sport         String
+  metaId        Int            @unique
+  meta          Meta           @relation(fields: [metaId], references: [id])
+  trainingGoals TrainingGoal[]
+  activities    Activity[]
 }
 
 model IntensityZone {
@@ -37,16 +36,6 @@ model Meta {
   speed          Int
   athlete        Athlete?
   intensityZones IntensityZone[]
-}
-
-model TrainingSession {
-  id           Int      @id @default(autoincrement())
-  date         DateTime
-  name         String
-  tags         String
-  activityType String
-  athleteId    Int
-  Athlete      Athlete  @relation(fields: [athleteId], references: [id])
 }
 
 model TrainingGoal {

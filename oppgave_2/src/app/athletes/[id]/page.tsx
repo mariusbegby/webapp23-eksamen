@@ -115,11 +115,11 @@ export default function Athlete() {
             </Link>
           </div>
 
-          <div className="col-span-full rounded-lg bg-indigo-50 p-4 shadow dark:bg-indigo-950">
+          <div className="col-span-full mt-8">
             <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
               Økter m/ rapporter
             </h2>
-            <p>
+            <p className="mb-4">
               TODO: Vis i tabell? Skal kunne: Filtrere på type aktivitet og tag.
               Kunne filtrere på status til rapporten. Kunne sortere etter dato.
               Hver rad skal vise: Status på økten/rapporten, duplisere økten
@@ -127,6 +127,57 @@ export default function Athlete() {
               (kun om den har rapport), rapportere økten om den ikke har
               rapport.
             </p>
+
+            <table className="min-w-full divide-y divide-gray-200 border dark:divide-gray-700 dark:bg-gray-800">
+              <thead className="bg-gray-50 dark:bg-gray-900">
+                <tr>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+                  >
+                    Navn
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+                  >
+                    Type
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+                  >
+                    Dato
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+                  >
+                    Tags
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+                {athlete.activities.map((activity) => (
+                  <tr key={activity.id}>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 transition-colors duration-200 ease-in-out hover:text-black dark:text-gray-300 dark:hover:text-white">
+                      <Link href={`/athletes/${id}/activities/${activity.id}`}>
+                        {activity.name}
+                      </Link>
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                      {activity.type}
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                      {new Date(activity.date).toLocaleDateString("nb-NO")}
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                      {activity.tags}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </section>
       )}
