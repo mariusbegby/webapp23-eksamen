@@ -21,7 +21,13 @@ export async function GET(request: NextRequest) {
   try {
     const athlete = await prisma.athlete.findUnique({
       where: { userId: id },
-      include: { meta: true },
+      include: {
+        meta: {
+          include: {
+            intensityZones: true,
+          },
+        },
+      },
     })
 
     if (!athlete) {
