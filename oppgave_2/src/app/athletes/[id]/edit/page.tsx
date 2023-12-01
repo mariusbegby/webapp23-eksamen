@@ -129,7 +129,7 @@ export default function EditAthlete() {
   }
 
   return (
-    <Page title="Oppdater utøver" backButtonLocation={`/athletes/${id}`}>
+    <Page title="Endre utøver" backButtonLocation={`/athletes/${id}`}>
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
           <div

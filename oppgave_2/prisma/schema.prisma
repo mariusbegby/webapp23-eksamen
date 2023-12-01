@@ -52,10 +52,11 @@ model Activity {
   date      DateTime
   name      String
   tags      String
-  goalId    String
+  type      String
+  goalId    String?
   athleteId Int
   Athlete   Athlete    @relation(fields: [athleteId], references: [id])
-  Interval  Interval[]
+  intervals Interval[]
   questions Question[]
 }
 
