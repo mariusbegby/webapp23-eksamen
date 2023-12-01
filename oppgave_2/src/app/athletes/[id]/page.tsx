@@ -43,6 +43,13 @@ export default function Athlete() {
         Endre utøver
       </Link>
 
+      <Link
+        href={`/athletes/${id}/activities/new`}
+        className="mb-2 rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
+      >
+        Opprett treningsøkt
+      </Link>
+
       <p>TODO: Opprett økt?</p>
 
       <p>TODO: Opprett treningsmål/konkurranser?</p>
@@ -86,16 +93,40 @@ export default function Athlete() {
 
           <div className="rounded-lg bg-indigo-50 p-4 shadow dark:bg-indigo-950">
             <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
-              Økter
+              Konkurranser
             </h2>
-            <p>TODO: Vis i tabell?</p>
+            <Link
+              href={`/athletes/${id}/contests/new`}
+              className="mb-2 rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
+            >
+              TODO: Opprett konkurranse
+            </Link>
           </div>
 
           <div className="rounded-lg bg-indigo-50 p-4 shadow dark:bg-indigo-950">
             <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
-              Rapporter
+              Treningsmål
             </h2>
-            <p>TODO: Vis i tabell?</p>
+            <Link
+              href={`/athletes/${id}/goals/new`}
+              className="mb-2 rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
+            >
+              TODO: Opprett treningsmål
+            </Link>
+          </div>
+
+          <div className="col-span-full rounded-lg bg-indigo-50 p-4 shadow dark:bg-indigo-950">
+            <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
+              Økter m/ rapporter
+            </h2>
+            <p>
+              TODO: Vis i tabell? Skal kunne: Filtrere på type aktivitet og tag.
+              Kunne filtrere på status til rapporten. Kunne sortere etter dato.
+              Hver rad skal vise: Status på økten/rapporten, duplisere økten
+              (uten svar), slette økten, endre økten, laste ned økten som excel
+              (kun om den har rapport), rapportere økten om den ikke har
+              rapport.
+            </p>
           </div>
         </section>
       )}

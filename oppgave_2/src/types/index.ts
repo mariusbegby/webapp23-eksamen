@@ -8,3 +8,8 @@ export type Athlete = {
     speed: number | null
   } | null
 }
+
+export type Question = {
+  question: string
+  type: string
+}

@@ -24,6 +24,10 @@ const links = [
     href: "/questions/new",
     label: "Legg til nytt spørsmål",
   },
+  {
+    href: "/import",
+    label: "Importer utøverdata",
+  },
 ]
 
 export function Sidebar() {

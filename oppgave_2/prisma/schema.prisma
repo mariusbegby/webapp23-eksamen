@@ -55,16 +55,15 @@ model Activity {
   goalId    String
   athleteId Int
   Athlete   Athlete    @relation(fields: [athleteId], references: [id])
-  Question  Question[]
   Interval  Interval[]
+  questions Question[]
 }
 
 model Question {
-  id         String   @id @default(uuid())
+  id         String     @id @default(uuid())
   question   String
   type       String
-  activityId Int
-  Activity   Activity @relation(fields: [activityId], references: [id])
+  activities Activity[]
 }
 
 model Interval {
