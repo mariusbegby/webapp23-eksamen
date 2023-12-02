@@ -74,19 +74,19 @@ export default function Athlete() {
             <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
               Ytelsesdata
             </h2>
-            {athlete.meta?.heartrate !== null && (
+            {athlete.meta.heartrate !== null && (
               <p className="text-lg text-gray-800 dark:text-gray-100">
-                Hjertefrekvens: {athlete.meta?.heartrate} slag pr. minutt
+                Hjertefrekvens: {athlete.meta.heartrate} slag pr. minutt
               </p>
             )}
-            {athlete.meta?.watt !== null && (
+            {athlete.meta.watt !== null && (
               <p className="text-lg text-gray-800 dark:text-gray-100">
-                Terskelwatt: {athlete.meta?.watt} watt
+                Terskelwatt: {athlete.meta.watt} watt
               </p>
             )}
-            {athlete.meta?.speed !== null && (
+            {athlete.meta.speed !== null && (
               <p className="text-lg text-gray-800 dark:text-gray-100">
-                Terskelfart: {athlete.meta?.speed} km/t
+                Terskelfart: {athlete.meta.speed} km/t
               </p>
             )}
           </div>
@@ -166,7 +166,7 @@ export default function Athlete() {
                       </Link>
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
-                      {activity.type}
+                      {activity.sport}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
                       {new Date(activity.date).toLocaleDateString("nb-NO")}

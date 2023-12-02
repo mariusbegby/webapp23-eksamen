@@ -64,12 +64,11 @@ model Activity {
 }
 
 model MetricOptions {
-  id         String     @id @default(uuid())
-  heartrate  Boolean
-  watt       Boolean
-  speed      Boolean
-  activityId Int
-  Activity   Activity[]
+  id        String     @id @default(uuid())
+  heartrate Boolean
+  watt      Boolean
+  speed     Boolean
+  Activity  Activity[]
 }
 
 model Question {
@@ -81,9 +80,8 @@ model Question {
 
 model Interval {
   id         String   @id @default(uuid())
-  type       String
   duration   Int
-  intensity  Int
+  zone       Int
   activityId Int
   Activity   Activity @relation(fields: [activityId], references: [id])
 }

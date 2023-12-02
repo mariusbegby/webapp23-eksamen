@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import type { Question, Sport } from "@/types"
+import type { MetricOptions, Question, Sport } from "@/types"
 import { usePathname } from "next/navigation"
 
 import { Page } from "@/components/PageTemplate"
@@ -9,12 +9,6 @@ import { Page } from "@/components/PageTemplate"
 type Interval = {
   duration: string
   zone: string
-}
-
-type MetricOptions = {
-  heartrate: boolean
-  watt: boolean
-  speed: boolean
 }
 
 type ActivityForm = {

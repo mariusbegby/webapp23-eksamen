@@ -1,20 +1,27 @@
+import type { Sport } from "@/types"
 import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
 import { prisma } from "@/lib/prisma"
 
 type Interval = {
-  type: string
   duration: string
-  intensity: string
+  zone: string
+}
+
+type MetricOptions = {
+  heartrate: boolean
+  watt: boolean
+  speed: boolean
 }
 
 type ActivityRequestBody = {
   date: string
   name: string
   tags: string
-  type: string
-  questions: string[]
+  sport: Sport
+  questionIds: string[]
+  metricOptions: MetricOptions
   intervals: Interval[]
 }
 
@@ -31,6 +38,7 @@ export async function GET(request: NextRequest) {
       include: {
         questions: true,
         intervals: true,
+        metricOptions: true,
       },
     })
 
@@ -48,7 +56,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const { date, name, tags, type, questions, intervals } =
+  const { date, name, tags, sport, questionIds, metricOptions, intervals } =
     (await request.json()) as ActivityRequestBody
   const athleteId = request.nextUrl.pathname.split("/")[3]
 
@@ -58,19 +66,21 @@ export async function POST(request: NextRequest) {
         date: new Date(date),
         name: name,
         tags: tags,
-        type: type,
+        sport: sport,
         Athlete: {
           connect: { userId: athleteId },
         },
         questions: {
-          connect: questions.map((questionId) => ({ id: questionId })),
+          connect: questionIds.map((questionId) => ({ id: questionId })),
         },
         intervals: {
           create: intervals.map((interval) => ({
-            type: interval.type,
             duration: parseInt(interval.duration),
-            intensity: parseInt(interval.intensity),
+            zone: parseInt(interval.zone),
           })),
+        },
+        metricOptions: {
+          create: metricOptions,
         },
       },
     })

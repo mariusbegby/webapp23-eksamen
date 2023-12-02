@@ -11,9 +11,16 @@ type Activity = {
   date: string
   name: string
   tags: string
-  type: string
+  sport: Sport
   intervals: Interval[]
   questions: Question[]
+  metricOptions: MetricOptions
+}
+
+export type MetricOptions = {
+  heartrate: boolean
+  watt: boolean
+  speed: boolean
 }
 
 type Interval = {
