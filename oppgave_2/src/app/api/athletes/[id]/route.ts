@@ -27,7 +27,13 @@ export async function GET(request: NextRequest) {
             intensityZones: true,
           },
         },
-        activities: true,
+        activities: {
+          include: {
+            metricOptions: true,
+            intervals: true,
+            questions: true,
+          },
+        },
       },
     })
 

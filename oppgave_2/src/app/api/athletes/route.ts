@@ -29,6 +29,13 @@ export async function GET() {
             intensityZones: true,
           },
         },
+        activities: {
+          include: {
+            metricOptions: true,
+            intervals: true,
+            questions: true,
+          },
+        },
       },
     })
     return NextResponse.json({ success: true, data: athletes })
