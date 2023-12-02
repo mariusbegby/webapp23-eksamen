@@ -95,8 +95,22 @@ export default function Athlete() {
               href={`/athletes/${id}/goals/new`}
               className="mb-2 rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
             >
-              TODO: Opprett treningsmål
+              Opprett treningsmål
             </Link>
+
+            {athlete.goals && athlete.goals.length > 0 ? (
+              <ul className="mt-4 list-inside list-disc">
+                {athlete.goals.map((goal) => (
+                  <li key={goal.id}>
+                    Navn: {goal.name}, Mål: {goal.goal}, Dato: {goal.date}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-lg text-gray-800 dark:text-gray-100">
+                Ingen treningsmål registrert.
+              </p>
+            )}
           </div>
 
           <div className="rounded-lg bg-indigo-50 p-4 shadow dark:bg-indigo-950">
@@ -109,6 +123,21 @@ export default function Athlete() {
             >
               Opprett konkurranse
             </Link>
+
+            {athlete.contests && athlete.contests.length > 0 ? (
+              <ul className="mt-4 list-inside list-disc">
+                {athlete.contests.map((contest) => (
+                  <li key={contest.id}>
+                    Navn: {contest.name}, Mål: {contest.goal}, Dato:{" "}
+                    {contest.date}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-lg text-gray-800 dark:text-gray-100">
+                Ingen treningsmål registrert.
+              </p>
+            )}
           </div>
 
           <div className="col-span-full mt-8">

@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
         },
         reports: true,
         contests: true,
+        goals: true,
       },
     })
 

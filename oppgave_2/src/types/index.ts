@@ -5,6 +5,15 @@ export type Athlete = {
   meta: Meta
   activities?: Activity[]
   contests?: Contest[]
+  goals?: Goal[]
+}
+
+type Goal = {
+  id: number
+  name: string
+  date: string
+  goal: number
+  comment: string
 }
 
 type Contest = {

@@ -15,8 +15,33 @@ model Athlete {
   metaId     Int               @unique
   meta       Meta              @relation(fields: [metaId], references: [id])
   contests   TrainingContest[]
+  goals      TrainingGoal[]
   activities Activity[]
   reports    ActivityReport[]
+}
+
+model TrainingGoal {
+  id        Int      @id @default(autoincrement())
+  name      String
+  date      DateTime
+  goal      Int
+  comment   String?
+  athleteId Int
+  Athlete   Athlete  @relation(fields: [athleteId], references: [id])
+}
+
+model TrainingContest {
+  id         Int        @id @default(autoincrement())
+  name       String
+  date       DateTime
+  location   String
+  goal       String
+  sport      String
+  priority   String
+  comment    String?
+  athleteId  Int
+  Athlete    Athlete    @relation(fields: [athleteId], references: [id])
+  activities Activity[]
 }
 
 model IntensityZone {
@@ -37,20 +62,6 @@ model Meta {
   speed          Int
   athlete        Athlete?
   intensityZones IntensityZone[]
-}
-
-model TrainingContest {
-  id         Int        @id @default(autoincrement())
-  name       String
-  date       DateTime
-  location   String
-  goal       String
-  sport      String
-  priority   String
-  comment    String?
-  athleteId  Int
-  Athlete    Athlete    @relation(fields: [athleteId], references: [id])
-  activities Activity[]
 }
 
 model Activity {
