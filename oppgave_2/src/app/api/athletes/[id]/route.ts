@@ -34,6 +34,8 @@ export async function GET(request: NextRequest) {
             questions: true,
           },
         },
+        reports: true,
+        goals: true,
       },
     })
 

@@ -111,7 +111,7 @@ export default function Athlete() {
               href={`/athletes/${id}/goals/new`}
               className="mb-2 rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
             >
-              TODO: Opprett treningsmål
+              Opprett treningsmål
             </Link>
           </div>
 

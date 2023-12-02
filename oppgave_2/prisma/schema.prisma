@@ -8,14 +8,15 @@ datasource db {
 }
 
 model Athlete {
-  id            Int            @id @default(autoincrement())
-  userId        String         @unique
-  gender        String
-  sport         String
-  metaId        Int            @unique
-  meta          Meta           @relation(fields: [metaId], references: [id])
-  trainingGoals TrainingGoal[]
-  activities    Activity[]
+  id         Int              @id @default(autoincrement())
+  userId     String           @unique
+  gender     String
+  sport      String
+  metaId     Int              @unique
+  meta       Meta             @relation(fields: [metaId], references: [id])
+  goals      TrainingGoal[]
+  activities Activity[]
+  reports    ActivityReport[]
 }
 
 model IntensityZone {
@@ -39,13 +40,17 @@ model Meta {
 }
 
 model TrainingGoal {
-  id        Int      @id @default(autoincrement())
-  name      String
-  deadline  DateTime
-  goal      Int
-  comment   String
-  athleteId Int
-  Athlete   Athlete  @relation(fields: [athleteId], references: [id])
+  id         Int        @id @default(autoincrement())
+  name       String
+  date       DateTime
+  location   String
+  goal       String
+  sport      String
+  priority   String
+  comment    String?
+  athleteId  Int
+  Athlete    Athlete    @relation(fields: [athleteId], references: [id])
+  activities Activity[]
 }
 
 model Activity {
@@ -54,13 +59,22 @@ model Activity {
   name            String
   tags            String
   sport           String
-  goalId          String?
   athleteId       Int
   Athlete         Athlete       @relation(fields: [athleteId], references: [id])
+  trainingGoalId  Int?
+  TrainingGoal    TrainingGoal? @relation(fields: [trainingGoalId], references: [id])
   intervals       Interval[]
   questions       Question[]
   metricOptions   MetricOptions @relation(fields: [metricOptionsId], references: [id])
   metricOptionsId String
+}
+
+model ActivityReport {
+  id        Int      @id @default(autoincrement())
+  date      DateTime
+  athleteId Int
+  status    String
+  Athlete   Athlete  @relation(fields: [athleteId], references: [id])
 }
 
 model MetricOptions {

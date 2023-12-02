@@ -46,6 +46,8 @@ export type Sport =
   | "Annet"
   | ""
 
+export type Priority = "A" | "B" | "C" | ""
+
 export type IntensityZone = {
   id: number
   type: string
