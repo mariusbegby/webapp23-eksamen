@@ -106,7 +106,10 @@ export default function NewActivity() {
       value = numValue.toString()
     }
     setNumQuestions(parseInt(value))
-    setForm((prevForm) => updateQuestions(prevForm, parseInt(value)))
+    setForm((prevForm) => {
+      const updatedQuestionIds = Array(parseInt(value)).fill(questions[0].id)
+      return { ...prevForm, questionIds: updatedQuestionIds }
+    })
   }
 
   const handleNumIntervalsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
