@@ -86,8 +86,10 @@ export default function NewContest() {
               "Feltene for navn, dato, sted, mål, sport og prioritet må fylles ut.",
             )
             break
-          case "An athlete cannot have more than three contests":
-            setError("En utøver kan ikke ha mer enn tre konkurranser.")
+          case "An athlete cannot have more than three contests in a given year":
+            setError(
+              "En utøver kan ikke ha mer enn tre konkurranser i samme år.",
+            )
             break
           default:
             setError(

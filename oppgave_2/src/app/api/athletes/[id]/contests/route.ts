@@ -63,11 +63,19 @@ export async function POST(request: NextRequest) {
     },
   })
 
-  if (existingContests.length >= 3) {
+  const contestsWithSameYear = existingContests.filter((contest) => {
+    const contestYear = new Date(contest.date).getFullYear()
+    const newContestYear = new Date(date).getFullYear()
+
+    return contestYear === newContestYear
+  })
+
+  if (contestsWithSameYear.length >= 3) {
     return NextResponse.json(
       {
         success: false,
-        error: "An athlete cannot have more than three contests",
+        error:
+          "An athlete cannot have more than three contests in a given year",
       },
       { status: 400 },
     )
