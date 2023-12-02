@@ -1,24 +1,29 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import type { Athlete, IntensityZone, Question } from "@/types"
+import type { Question, Sport } from "@/types"
 import { usePathname } from "next/navigation"
 
 import { Page } from "@/components/PageTemplate"
 
 type Interval = {
-  id?: string
-  type: string
   duration: string
-  intensity: string
+  zone: string
+}
+
+type MetricOptions = {
+  heartrate: boolean
+  watt: boolean
+  speed: boolean
 }
 
 type ActivityForm = {
   date: string
   name: string
   tags: string
-  type: string
-  questions: string[]
+  sport: Sport
+  metricOptions: MetricOptions
+  questionIds: string[]
   intervals: Interval[]
 }
 
@@ -31,12 +36,6 @@ type ResponseDataNewActivity = {
 type ResponseDataQuestions = {
   success: boolean
   data: Question[]
-  error?: string
-}
-
-type ResponseDataAthlete = {
-  success: boolean
-  data: Athlete
   error?: string
 }
 
@@ -54,36 +53,34 @@ export default function NewActivity() {
   const [numQuestions, setNumQuestions] = useState(1)
 
   const [form, setForm] = useState<ActivityForm>({
-    date: "",
+    date: new Date().toISOString().split("T")[0],
     name: "",
     tags: "",
-    type: "",
-    questions: [],
+    sport: "",
+    questionIds: [],
+    metricOptions: {
+      heartrate: false,
+      watt: false,
+      speed: false,
+    },
     intervals: [
       {
-        type: "heartrate",
         duration: "",
-        intensity: "1",
+        zone: "1",
       },
     ],
   })
 
-  const [intensityZones, setZones] = useState<IntensityZone[]>([])
-
-  useEffect(() => {
-    const fetchAthleteData = async () => {
-      const response = await fetch(`/api/athletes/${id}`)
-      const data = (await response.json()) as ResponseDataAthlete
-
-      if (data.success && data.data.meta.intensityZones) {
-        setZones(data.data.meta.intensityZones)
-      } else {
-        console.error(data.error)
-      }
-    }
-
-    fetchAthleteData().catch(console.error)
-  }, [id])
+  const handleOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, checked } = e.target
+    setForm((prevForm) => ({
+      ...prevForm,
+      metricOptions: {
+        ...prevForm.metricOptions,
+        [id]: checked,
+      },
+    }))
+  }
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -95,7 +92,7 @@ export default function NewActivity() {
         // Update form state with first question as default
         setForm((prevForm) => ({
           ...prevForm,
-          questions: [data.data[0].id],
+          questionIds: [data.data[0].id],
         }))
       } else {
         console.error(data.error)
@@ -139,9 +136,8 @@ export default function NewActivity() {
         intervals: [
           ...prevForm.intervals,
           ...Array<Interval>(newNumIntervals - prevForm.intervals.length).fill({
-            type: "heartrate",
             duration: "",
-            intensity: "1",
+            zone: "1",
           }),
         ],
       }
@@ -157,12 +153,12 @@ export default function NewActivity() {
     prevForm: ActivityForm,
     newNumQuestions: number,
   ): ActivityForm => {
-    if (newNumQuestions > prevForm.questions.length) {
+    if (newNumQuestions > prevForm.questionIds.length) {
       return {
         ...prevForm,
-        questions: [
-          ...prevForm.questions,
-          ...Array<string>(newNumQuestions - prevForm.questions.length).fill(
+        questionIds: [
+          ...prevForm.questionIds,
+          ...Array<string>(newNumQuestions - prevForm.questionIds.length).fill(
             "",
           ),
         ],
@@ -170,7 +166,7 @@ export default function NewActivity() {
     } else {
       return {
         ...prevForm,
-        questions: prevForm.questions.slice(0, newNumQuestions),
+        questionIds: prevForm.questionIds.slice(0, newNumQuestions),
       }
     }
   }
@@ -186,9 +182,9 @@ export default function NewActivity() {
     e: React.ChangeEvent<HTMLSelectElement>,
     index: number,
   ) => {
-    const newQuestions = [...form.questions]
+    const newQuestions = [...form.questionIds]
     newQuestions[index] = e.target.value
-    setForm((prevForm) => ({ ...prevForm, questions: newQuestions }))
+    setForm((prevForm) => ({ ...prevForm, questionIds: newQuestions }))
   }
 
   const handleIntervalChange = (
@@ -197,60 +193,12 @@ export default function NewActivity() {
     field: keyof Interval,
   ) => {
     const newIntervals = [...form.intervals]
-
-    if (field === "intensity") {
-      const interval = intensityZones.find(
-        (zone) => zone.id === parseInt(e.target.value, 10),
-      )
-
-      if (!interval) {
-        return
-      }
-
-      newIntervals[index] = {
-        ...newIntervals[index],
-        id: interval.id.toString(),
-        intensity: interval.intensity.toString(),
-        type: interval.type,
-      }
-    } else {
-      newIntervals[index] = {
-        ...newIntervals[index],
-        [field]: e.target.value,
-      }
+    newIntervals[index] = {
+      ...newIntervals[index],
+      [field]: e.target.value,
     }
-
     setForm((prevForm) => ({ ...prevForm, intervals: newIntervals }))
   }
-
-  const intensityOptions = intensityZones.map((intensityZone, index) => {
-    let type
-    let unit
-
-    switch (intensityZone.type) {
-      case "heartrate":
-        type = "Hjertefrekvens"
-        unit = "slag pr. minutt"
-        break
-      case "speed":
-        type = "Fart"
-        unit = "km/t"
-        break
-      case "watt":
-        type = "Watt"
-        unit = "W"
-        break
-      default:
-        type = intensityZone.type
-        unit = ""
-    }
-
-    return {
-      label: `${type}: Sone ${intensityZone.zone} - ${intensityZone.intensity} ${unit}`,
-      value: intensityZone.id,
-      key: index,
-    }
-  })
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -357,8 +305,8 @@ export default function NewActivity() {
             <label className="block font-medium text-gray-700 dark:text-gray-200">
               Type aktivitet:
               <select
-                name="type"
-                value={form.type}
+                name="sport"
+                value={form.sport}
                 onChange={handleGeneralInfoChange}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
               >
@@ -390,7 +338,7 @@ export default function NewActivity() {
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
             />
           </label>
-          {form.questions.map((questionId, index) => (
+          {form.questionIds.map((questionId, index) => (
             <div key={index}>
               <label className="block font-medium text-gray-700 dark:text-gray-200">
                 Spørsmål {index + 1}:
@@ -422,6 +370,59 @@ export default function NewActivity() {
           <legend className="text-lg font-bold text-gray-900 dark:text-gray-200">
             Intervaller
           </legend>
+
+          <div>
+            <h3 className="block font-medium text-gray-700 dark:text-gray-200">
+              Velg måleparametere:
+            </h3>
+            <div className="mt-2 flex space-x-4">
+              <div>
+                <input
+                  type="checkbox"
+                  id="heartrate"
+                  value="heartrate"
+                  onChange={handleOptionChange}
+                  className="rounded"
+                />
+                <label
+                  htmlFor="heartrate"
+                  className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-200"
+                >
+                  Hjertefrekvens
+                </label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="watt"
+                  value="watt"
+                  onChange={handleOptionChange}
+                  className="rounded"
+                />
+                <label
+                  htmlFor="watt"
+                  className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-200"
+                >
+                  Watt
+                </label>
+              </div>
+              <div>
+                <input
+                  type="checkbox"
+                  id="speed"
+                  value="speed"
+                  onChange={handleOptionChange}
+                  className="rounded"
+                />
+                <label
+                  htmlFor="speed"
+                  className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-200"
+                >
+                  Fart
+                </label>
+              </div>
+            </div>
+          </div>
           <label className="block font-medium text-gray-700 dark:text-gray-200">
             Antall intervaller:
             <input
@@ -453,17 +454,17 @@ export default function NewActivity() {
                 <label className="block font-medium text-gray-700 dark:text-gray-200">
                   Intervall {index + 1} intensitetssone:
                   <select
-                    value={interval.id}
+                    value={interval.zone}
                     onChange={(e) => {
-                      handleIntervalChange(e, index, "intensity")
+                      handleIntervalChange(e, index, "zone")
                     }}
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
                   >
-                    {intensityOptions.map((option) => (
-                      <option key={option.key} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
+                    <option value="1">Sone 1</option>
+                    <option value="2">Sone 2</option>
+                    <option value="3">Sone 3</option>
+                    <option value="4">Sone 4</option>
+                    <option value="5">Sone 5</option>
                   </select>
                 </label>
               </div>

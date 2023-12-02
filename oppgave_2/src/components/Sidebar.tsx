@@ -17,16 +17,16 @@ const links = [
     label: "Legg til ny utøver",
   },
   {
-    href: "/templates/new",
-    label: "Legg til ny mal",
-  },
-  {
     href: "/questions/new",
     label: "Legg til nytt spørsmål",
   },
   {
+    href: "/templates/new",
+    label: "Legg til ny mal (TODO)",
+  },
+  {
     href: "/import",
-    label: "Importer utøverdata",
+    label: "Importer utøverdata (TODO)",
   },
 ]
 

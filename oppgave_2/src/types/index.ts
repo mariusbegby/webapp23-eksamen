@@ -29,6 +29,16 @@ type Meta = {
   intensityZones?: IntensityZone[]
 }
 
+export type Sport =
+  | "Løping"
+  | "Sykling"
+  | "Ski"
+  | "Triatlon"
+  | "Svømming"
+  | "Styrke"
+  | "Annet"
+  | ""
+
 export type IntensityZone = {
   id: number
   type: string

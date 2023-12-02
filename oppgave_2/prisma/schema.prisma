@@ -49,16 +49,27 @@ model TrainingGoal {
 }
 
 model Activity {
-  id        Int        @id @default(autoincrement())
-  date      DateTime
-  name      String
-  tags      String
-  type      String
-  goalId    String?
-  athleteId Int
-  Athlete   Athlete    @relation(fields: [athleteId], references: [id])
-  intervals Interval[]
-  questions Question[]
+  id              Int           @id @default(autoincrement())
+  date            DateTime
+  name            String
+  tags            String
+  sport           String
+  goalId          String?
+  athleteId       Int
+  Athlete         Athlete       @relation(fields: [athleteId], references: [id])
+  intervals       Interval[]
+  questions       Question[]
+  metricOptions   MetricOptions @relation(fields: [metricOptionsId], references: [id])
+  metricOptionsId String
+}
+
+model MetricOptions {
+  id         String     @id @default(uuid())
+  heartrate  Boolean
+  watt       Boolean
+  speed      Boolean
+  activityId Int
+  Activity   Activity[]
 }
 
 model Question {
