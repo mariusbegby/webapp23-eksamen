@@ -212,6 +212,24 @@ export default function NewActivity() {
     if (response.ok) {
       setError(null)
       setMessage("Økten ble opprettet!")
+      setForm({
+        date: new Date().toISOString().split("T")[0],
+        name: "",
+        tags: "",
+        sport: "",
+        questionIds: [],
+        metricOptions: {
+          heartrate: false,
+          watt: false,
+          speed: false,
+        },
+        intervals: [
+          {
+            duration: "",
+            zone: "1",
+          },
+        ],
+      })
       const responseData = (await response.json()) as ResponseDataNewActivity
       console.log(responseData)
     } else {
@@ -220,8 +238,10 @@ export default function NewActivity() {
       if (data.error) {
         setMessage(null)
         switch (data.error) {
-          case "Bla bla bla":
-            setError("Bla bla bla")
+          case "Name, date, tags, sport, questionIds and intervals is required":
+            setError(
+              "Navn, dato, tagger, type aktivitet samt minst ett spørsmål og intervall er påkrevd",
+            )
             break
           default:
             setError(

@@ -50,10 +50,6 @@ export default function Athlete() {
         Opprett treningsøkt
       </Link>
 
-      <p>TODO: Opprett økt?</p>
-
-      <p>TODO: Opprett treningsmål/konkurranser?</p>
-
       {athlete && (
         <section className="grid grid-cols-1 gap-4 md:grid-cols-2 ">
           <div className="rounded-lg bg-indigo-50 p-4 shadow dark:bg-indigo-950">
@@ -93,25 +89,25 @@ export default function Athlete() {
 
           <div className="rounded-lg bg-indigo-50 p-4 shadow dark:bg-indigo-950">
             <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
-              Konkurranser
-            </h2>
-            <Link
-              href={`/athletes/${id}/contests/new`}
-              className="mb-2 rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
-            >
-              TODO: Opprett konkurranse
-            </Link>
-          </div>
-
-          <div className="rounded-lg bg-indigo-50 p-4 shadow dark:bg-indigo-950">
-            <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
               Treningsmål
             </h2>
             <Link
               href={`/athletes/${id}/goals/new`}
               className="mb-2 rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
             >
-              Opprett treningsmål
+              TODO: Opprett treningsmål
+            </Link>
+          </div>
+
+          <div className="rounded-lg bg-indigo-50 p-4 shadow dark:bg-indigo-950">
+            <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
+              Konkurranser
+            </h2>
+            <Link
+              href={`/athletes/${id}/contests/new`}
+              className="mb-2 rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
+            >
+              Opprett konkurranse
             </Link>
           </div>
 

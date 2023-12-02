@@ -60,6 +60,23 @@ export async function POST(request: NextRequest) {
     (await request.json()) as ActivityRequestBody
   const athleteId = request.nextUrl.pathname.split("/")[3]
 
+  if (
+    !name ||
+    !date ||
+    !tags ||
+    !sport ||
+    questionIds.length === 0 ||
+    intervals.length === 0
+  ) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: "Name, date, tags, sport, questionIds and intervals is required",
+      },
+      { status: 400 },
+    )
+  }
+
   try {
     const activity = await prisma.activity.create({
       data: {

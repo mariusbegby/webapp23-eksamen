@@ -8,13 +8,13 @@ datasource db {
 }
 
 model Athlete {
-  id         Int              @id @default(autoincrement())
-  userId     String           @unique
+  id         Int               @id @default(autoincrement())
+  userId     String            @unique
   gender     String
   sport      String
-  metaId     Int              @unique
-  meta       Meta             @relation(fields: [metaId], references: [id])
-  goals      TrainingGoal[]
+  metaId     Int               @unique
+  meta       Meta              @relation(fields: [metaId], references: [id])
+  contests   TrainingContest[]
   activities Activity[]
   reports    ActivityReport[]
 }
@@ -39,7 +39,7 @@ model Meta {
   intensityZones IntensityZone[]
 }
 
-model TrainingGoal {
+model TrainingContest {
   id         Int        @id @default(autoincrement())
   name       String
   date       DateTime
@@ -54,19 +54,19 @@ model TrainingGoal {
 }
 
 model Activity {
-  id              Int           @id @default(autoincrement())
-  date            DateTime
-  name            String
-  tags            String
-  sport           String
-  athleteId       Int
-  Athlete         Athlete       @relation(fields: [athleteId], references: [id])
-  trainingGoalId  Int?
-  TrainingGoal    TrainingGoal? @relation(fields: [trainingGoalId], references: [id])
-  intervals       Interval[]
-  questions       Question[]
-  metricOptions   MetricOptions @relation(fields: [metricOptionsId], references: [id])
-  metricOptionsId String
+  id                Int              @id @default(autoincrement())
+  date              DateTime
+  name              String
+  tags              String
+  sport             String
+  athleteId         Int
+  Athlete           Athlete          @relation(fields: [athleteId], references: [id])
+  trainingContestId Int?
+  TrainingContest   TrainingContest? @relation(fields: [trainingContestId], references: [id])
+  intervals         Interval[]
+  questions         Question[]
+  metricOptions     MetricOptions    @relation(fields: [metricOptionsId], references: [id])
+  metricOptionsId   String
 }
 
 model ActivityReport {

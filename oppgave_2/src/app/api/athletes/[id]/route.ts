@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
           },
         },
         reports: true,
-        goals: true,
+        contests: true,
       },
     })
 

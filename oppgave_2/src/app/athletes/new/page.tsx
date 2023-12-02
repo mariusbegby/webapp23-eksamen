@@ -197,7 +197,7 @@ export default function NewAthlete() {
                 type="number"
                 placeholder="slag pr. minutt"
                 name="heartrate"
-                value={athlete.meta?.heartrate ?? 0}
+                value={athlete.meta.heartrate ?? 0}
                 onChange={handleChange}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
               />
@@ -210,7 +210,7 @@ export default function NewAthlete() {
                 type="number"
                 placeholder="watt"
                 name="watt"
-                value={athlete.meta?.watt ?? 0}
+                value={athlete.meta.watt ?? 0}
                 onChange={handleChange}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
               />
@@ -223,7 +223,7 @@ export default function NewAthlete() {
                 type="number"
                 placeholder="km/t"
                 name="speed"
-                value={athlete.meta?.speed ?? 0}
+                value={athlete.meta.speed ?? 0}
                 onChange={handleChange}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
               />
