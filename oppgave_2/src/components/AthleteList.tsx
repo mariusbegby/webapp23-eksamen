@@ -61,6 +61,12 @@ export function AthleteList({ athletes }: AthleteListProps) {
               scope="col"
               className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
             >
+              Antall økter
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+            >
               Egenskaper
             </th>
           </tr>
@@ -84,6 +90,9 @@ export function AthleteList({ athletes }: AthleteListProps) {
               </td>
               <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
                 {athlete.gender}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                {athlete.activities?.length}
               </td>
               <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
                 {athlete.meta && (
