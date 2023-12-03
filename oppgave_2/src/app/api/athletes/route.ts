@@ -38,7 +38,7 @@ export async function GET() {
         },
         reports: true,
         contests: true,
-        goas: true,
+        goals: true,
       },
     })
     return NextResponse.json({ success: true, data: athletes })
