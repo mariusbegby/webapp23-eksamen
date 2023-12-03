@@ -75,9 +75,9 @@ export default function NewQuestion() {
           </div>
         )}
 
-        {alreadyImported && (
+        {alreadyImported ? (
           <div
-            className="relative mb-4 rounded border border-yellow-400 bg-yellow-100 px-4 py-3 text-yellow-700"
+            className="relative mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
             role="alert"
           >
             <strong className="font-bold">Status: </strong>
@@ -85,6 +85,17 @@ export default function NewQuestion() {
               {" "}
               Utøvere er allerede importert. Dersom du importerer på nytt kan
               dette føre til duplikater.
+            </span>
+          </div>
+        ) : (
+          <div
+            className="relative mb-4 rounded border border-indigo-400 bg-indigo-100 px-4 py-3 text-indigo-700"
+            role="alert"
+          >
+            <strong className="font-bold">Status: </strong>
+            <span className="block sm:inline">
+              {" "}
+              Utøvere er ikke blitt importert tidligere.
             </span>
           </div>
         )}
