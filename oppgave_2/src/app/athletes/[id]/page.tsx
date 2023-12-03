@@ -40,10 +40,9 @@ export default function Athlete() {
       if (filterTag && activity.tags !== filterTag) return false
       if (
         filterReportStatus &&
-        activity.ActivityReport &&
-        (activity.ActivityReport.status != "no"
-          ? "Reported"
-          : "Not reported") !== filterReportStatus
+        (filterReportStatus === "Ingen rapport"
+          ? activity.ActivityReport
+          : activity.ActivityReport?.status !== filterReportStatus)
       )
         return false
       return true
@@ -125,19 +124,21 @@ export default function Athlete() {
 
   return (
     <Page title="Utøverdetaljer" backButtonLocation="/">
-      <Link
-        href={`/athletes/${id}/edit`}
-        className="mb-2 rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
-      >
-        Endre utøver
-      </Link>
+      <div className="flex gap-4">
+        <Link
+          href={`/athletes/${id}/edit`}
+          className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
+        >
+          Endre utøver
+        </Link>
 
-      <Link
-        href={`/athletes/${id}/activities/new`}
-        className="mb-2 rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
-      >
-        Opprett treningsøkt
-      </Link>
+        <Link
+          href={`/athletes/${id}/activities/new`}
+          className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
+        >
+          Opprett treningsøkt
+        </Link>
+      </div>
 
       {athlete && (
         <section className="grid grid-cols-1 gap-4 md:grid-cols-2 ">
@@ -231,15 +232,8 @@ export default function Athlete() {
 
           <div className="col-span-full mt-8">
             <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
-              Økter m/ rapporter
+              Treningsoversikt
             </h2>
-            <p className="mb-4">
-              TODO: Filtrere på type aktivitet og tag. Kunne filtrere på status
-              til rapporten. Kunne sortere etter dato. Hver rad skal vise:
-              Status på økten/rapporten, duplisere økten (uten svar), slette
-              økten, endre økten, laste ned økten som excel (kun om den har
-              rapport), rapportere økten om den ikke har rapport.
-            </p>
 
             <div className="mb-4">
               <label className="font-medium text-gray-700 dark:text-gray-200">
@@ -267,7 +261,7 @@ export default function Athlete() {
                   onChange={(e) => {
                     setFilterTag(e.target.value || null)
                   }}
-                  className="mr-4 mt-1 w-32 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                  className="mr-4 mt-1 w-40 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
                 >
                   <option value="">Alle</option>
                   {tags.map((tag) => (
@@ -285,7 +279,7 @@ export default function Athlete() {
                   onChange={(e) => {
                     setFilterReportStatus(e.target.value || null)
                   }}
-                  className="mr-4 mt-1 w-32 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                  className="mr-4 mt-1 w-40 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
                 >
                   <option value="">Alle</option>
                   {reportStatuses.map((status) => (
@@ -342,6 +336,12 @@ export default function Athlete() {
                     scope="col"
                     className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
                   >
+                    Rapport status
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+                  >
                     Handlinger
                   </th>
                 </tr>
@@ -364,28 +364,34 @@ export default function Athlete() {
                       {activity.tags}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                      {activity.ActivityReport
+                        ? activity.ActivityReport.status
+                        : "Ingen rapport"}
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
                       <Link
                         href={`/athletes/${id}/activities/${activity.id}/edit`}
-                        className="mr-2 rounded bg-indigo-600 px-2 py-1 text-white hover:bg-indigo-700"
                       >
-                        Endre
+                        <button className="mr-2 rounded-md border border-transparent bg-indigo-600 px-2 py-1 text-sm font-medium text-white hover:bg-indigo-700">
+                          Endre
+                        </button>
                       </Link>
                       <button
-                        onClick={() => handleDeleteActivity(activity.id)}
-                        className="mr-2 rounded bg-red-600 px-2 py-1 text-white hover:bg-red-700"
-                      >
-                        Slett
-                      </button>
-                      <button
                         onClick={() => handleDuplicateActivity(activity.id)}
-                        className="mr-2 rounded bg-blue-600 px-2 py-1 text-white hover:bg-blue-700"
+                        className="mr-2 rounded-md border border-transparent bg-indigo-600 px-2 py-1 text-sm font-medium text-white hover:bg-indigo-700"
                       >
                         Dupliser (TODO)
+                      </button>
+                      <button
+                        onClick={() => handleDeleteActivity(activity.id)}
+                        className="mr-2 rounded-md border border-transparent bg-red-600 px-2 py-1 text-sm font-medium text-white hover:bg-red-700"
+                      >
+                        Slett
                       </button>
                       {activity.ActivityReport && (
                         <button
                           onClick={() => handleDownloadActivity(activity.id)}
-                          className="mr-2 rounded bg-green-600 px-2 py-1 text-white hover:bg-green-700"
+                          className="rounded-md border border-transparent bg-green-600 px-2 py-1 text-sm font-medium text-white hover:bg-green-700"
                         >
                           Last ned (TODO)
                         </button>
