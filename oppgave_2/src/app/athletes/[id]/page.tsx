@@ -124,25 +124,42 @@ export default function Athlete() {
 
   return (
     <Page title="Utøverdetaljer" backButtonLocation="/">
-      <div className="flex gap-4">
-        <Link
-          href={`/athletes/${id}/edit`}
-          className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
-        >
-          Endre utøver
-        </Link>
+      <div className="grid gap-4">
+        <div className="flex gap-4">
+          <Link
+            href={`/athletes/${id}/edit`}
+            className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
+          >
+            Endre utøver
+          </Link>
 
-        <Link
-          href={`/athletes/${id}/activities/new`}
-          className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
-        >
-          Opprett treningsøkt
-        </Link>
+          <Link
+            href={`/athletes/${id}/activities/new`}
+            className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
+          >
+            Opprett treningsøkt
+          </Link>
+        </div>
+        <div className="flex gap-4">
+          <Link
+            href={`/athletes/${id}/contests/new`}
+            className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
+          >
+            Opprett konkurranse
+          </Link>
+
+          <Link
+            href={`/athletes/${id}/goals/new`}
+            className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
+          >
+            Opprett treningsmål
+          </Link>
+        </div>
       </div>
 
       {athlete && (
         <section className="grid grid-cols-1 gap-4 md:grid-cols-2 ">
-          <div className="rounded-lg bg-indigo-50 p-4 shadow dark:bg-indigo-950">
+          <div className="">
             <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
               Utøverinformasjon
             </h2>
@@ -156,7 +173,8 @@ export default function Athlete() {
               Kjønn: {athlete.gender}
             </p>
           </div>
-          <div className="rounded-lg bg-indigo-50 p-4 shadow dark:bg-indigo-950">
+
+          <div className="">
             <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
               Ytelsesdata
             </h2>
@@ -177,17 +195,10 @@ export default function Athlete() {
             )}
           </div>
 
-          <div className="rounded-lg bg-indigo-50 p-4 shadow dark:bg-indigo-950">
+          <div className="">
             <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
               Treningsmål
             </h2>
-            <Link
-              href={`/athletes/${id}/goals/new`}
-              className="mb-2 rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
-            >
-              Opprett treningsmål
-            </Link>
-
             {athlete.goals && athlete.goals.length > 0 ? (
               <ul className="mt-4 list-inside list-disc">
                 {athlete.goals.map((goal) => (
@@ -203,17 +214,10 @@ export default function Athlete() {
             )}
           </div>
 
-          <div className="rounded-lg bg-indigo-50 p-4 shadow dark:bg-indigo-950">
+          <div className="">
             <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
               Konkurranser
             </h2>
-            <Link
-              href={`/athletes/${id}/contests/new`}
-              className="mb-2 rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-base font-medium text-white hover:bg-indigo-700"
-            >
-              Opprett konkurranse
-            </Link>
-
             {athlete.contests && athlete.contests.length > 0 ? (
               <ul className="mt-4 list-inside list-disc">
                 {athlete.contests.map((contest) => (

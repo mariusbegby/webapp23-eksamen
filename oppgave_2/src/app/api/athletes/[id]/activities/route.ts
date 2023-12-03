@@ -1,4 +1,4 @@
-import type { Sport } from "@/types"
+import type { MetricOptions, Sport } from "@/types"
 import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
@@ -7,12 +7,6 @@ import { prisma } from "@/lib/prisma"
 type Interval = {
   duration: string
   zone: string
-}
-
-type MetricOptions = {
-  heartrate: boolean
-  watt: boolean
-  speed: boolean
 }
 
 type ActivityRequestBody = {

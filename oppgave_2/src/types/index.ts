@@ -27,7 +27,7 @@ type Contest = {
   comment: string
 }
 
-type Activity = {
+export type Activity = {
   id: number
   date: string
   name: string
@@ -37,6 +37,8 @@ type Activity = {
   questions: Question[]
   metricOptions: MetricOptions
   ActivityReport?: ActivityReport
+  TrainingGoal?: Goal
+  TrainingContest?: Contest
 }
 
 type ActivityReport = {
@@ -45,6 +47,7 @@ type ActivityReport = {
 }
 
 export type MetricOptions = {
+  id?: string
   heartrate: boolean
   watt: boolean
   speed: boolean
@@ -52,7 +55,7 @@ export type MetricOptions = {
 
 type Interval = {
   duration: number
-  intensity: number
+  zone: number
 }
 
 type Meta = {

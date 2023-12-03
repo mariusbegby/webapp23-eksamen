@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import type { Athlete, MetricOptions, Question, Sport } from "@/types"
+import type { Activity, Athlete, MetricOptions, Question, Sport } from "@/types"
 import { usePathname } from "next/navigation"
 
 import { Page } from "@/components/PageTemplate"
@@ -23,10 +23,10 @@ type ActivityForm = {
   contestId?: string
 }
 
-type ResponseDataNewActivity = {
+type ResponseDataActivity = {
   success: boolean
   error?: string
-  data?: JSON
+  data?: Activity
 }
 
 type ResponseDataAthlete = {
@@ -41,7 +41,7 @@ type ResponseDataQuestions = {
   error?: string
 }
 
-export default function NewActivity() {
+export default function EditActivity() {
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
 
@@ -50,7 +50,8 @@ export default function NewActivity() {
 
   const pathname = usePathname()
   const pathParts = pathname.split("/")
-  const id = pathParts[pathParts.length - 3]
+  const id = pathParts[pathParts.length - 4]
+  const activityId = pathParts[pathParts.length - 2]
 
   const [numIntervals, setNumIntervals] = useState(1)
   const [numQuestions, setNumQuestions] = useState(1)
@@ -94,10 +95,6 @@ export default function NewActivity() {
 
       if (data.success) {
         setQuestions(data.data)
-        setForm((prevForm) => ({
-          ...prevForm,
-          questionIds: [data.data[0].id],
-        }))
       } else {
         console.error(data.error)
       }
@@ -111,6 +108,8 @@ export default function NewActivity() {
       const response = await fetch(`/api/athletes/${id}`)
       const data = (await response.json()) as ResponseDataAthlete
 
+      console.log("data", data)
+
       if (data.success) {
         setAthlete(data.data)
       } else {
@@ -120,6 +119,41 @@ export default function NewActivity() {
 
     fetchAthleteData().catch(console.error)
   }, [id])
+
+  useEffect(() => {
+    const fetchActivity = async () => {
+      const response = await fetch(
+        `/api/athletes/${id}/activities/${activityId}`,
+      )
+      const data = (await response.json()) as ResponseDataActivity
+
+      console.log("data", data)
+
+      if (data.success && data.data) {
+        setForm({
+          date: new Date(data.data.date).toISOString().split("T")[0],
+          name: data.data.name,
+          tags: data.data.tags,
+          sport: data.data.sport,
+          questionIds: data.data.questions.map((question) => question.id),
+          metricOptions: data.data.metricOptions,
+          intervals: data.data.intervals.map((interval) => ({
+            duration: interval.duration.toString(),
+            zone: interval.zone.toString(),
+          })),
+          trainingGoalId: data.data.TrainingGoal?.id.toString(),
+          contestId: data.data.TrainingContest?.id.toString(),
+        })
+
+        setNumIntervals(data.data.intervals.length)
+        setNumQuestions(data.data.questions.length)
+      } else {
+        console.error(data.error)
+      }
+    }
+
+    fetchActivity().catch(console.error)
+  }, [id, activityId])
 
   const handleNumQuestionsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value
@@ -205,41 +239,45 @@ export default function NewActivity() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const response = await fetch(`/api/athletes/${id}/activities`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `/api/athletes/${id}/activities/${activityId}`,
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(form),
       },
-      body: JSON.stringify(form),
-    })
+    )
 
     if (response.ok) {
       setError(null)
-      setMessage("Økten ble opprettet!")
+      setMessage("Økten ble oppdatert.")
+
+      const updatedActivity = (await response.json()) as Activity
+
       setForm({
-        date: new Date().toISOString().split("T")[0],
-        name: "",
-        tags: "",
-        sport: "",
-        questionIds: [],
+        date: new Date(updatedActivity.date).toISOString().split("T")[0],
+        name: updatedActivity.name,
+        tags: updatedActivity.tags,
+        sport: updatedActivity.sport,
+        questionIds: updatedActivity.questions.map((question) => question.id),
         metricOptions: {
-          heartrate: false,
-          watt: false,
-          speed: false,
+          heartrate: updatedActivity.metricOptions.heartrate,
+          watt: updatedActivity.metricOptions.watt,
+          speed: updatedActivity.metricOptions.speed,
         },
-        intervals: [
-          {
-            duration: "",
-            zone: "1",
-          },
-        ],
-        trainingGoalId: "",
-        contestId: "",
+        intervals: updatedActivity.intervals.map((interval) => ({
+          duration: interval.duration.toString(),
+          zone: interval.zone.toString(),
+        })),
+        trainingGoalId: updatedActivity.TrainingGoal?.id.toString(),
+        contestId: updatedActivity.TrainingContest?.id.toString(),
       })
       setNumQuestions(1)
       setNumIntervals(1)
     } else {
-      const data = (await response.json()) as ResponseDataNewActivity
+      const data = (await response.json()) as ResponseDataActivity
 
       if (data.error) {
         setMessage(null)
@@ -260,7 +298,7 @@ export default function NewActivity() {
   }
 
   return (
-    <Page title="Opprett treningsøkt" backButtonLocation={`/athletes/${id}`}>
+    <Page title="Oppdater treningsøkt" backButtonLocation={`/athletes/${id}`}>
       <form onSubmit={handleSubmit}>
         {error && (
           <div
@@ -548,7 +586,7 @@ export default function NewActivity() {
           type="submit"
           className="mt-4 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
-          Opprett økt
+          Oppdater økt
         </button>
       </form>
     </Page>
