@@ -26,7 +26,7 @@ const links = [
   },
   {
     href: "/import",
-    label: "Importer utøverdata (TODO)",
+    label: "Importer utøvere",
   },
 ]
 
