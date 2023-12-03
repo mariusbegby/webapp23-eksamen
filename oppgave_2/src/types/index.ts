@@ -36,6 +36,12 @@ type Activity = {
   intervals: Interval[]
   questions: Question[]
   metricOptions: MetricOptions
+  ActivityReport?: ActivityReport
+}
+
+type ActivityReport = {
+  date: Date
+  status: string
 }
 
 export type MetricOptions = {

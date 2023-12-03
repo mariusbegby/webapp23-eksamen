@@ -19,6 +19,45 @@ export default function Athlete() {
 
   const [athlete, setAthlete] = useState<Athlete | null>(null)
 
+  const [filterSport, setFilterSport] = useState<string | null>(null)
+  const [filterTag, setFilterTag] = useState<string | null>(null)
+  const [filterReportStatus, setFilterReportStatus] = useState<string | null>(
+    null,
+  )
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc")
+
+  const sports = Array.from(
+    new Set(athlete?.activities?.map((activity) => activity.sport) ?? []),
+  )
+  const tags = Array.from(
+    new Set(athlete?.activities?.map((activity) => activity.tags) ?? []),
+  )
+  const reportStatuses = ["Ingen rapport", "no", "low", "normal", "high"]
+
+  const filteredAndSortedActivities = athlete?.activities
+    ?.filter((activity) => {
+      if (filterSport && activity.sport !== filterSport) return false
+      if (filterTag && activity.tags !== filterTag) return false
+      if (
+        filterReportStatus &&
+        activity.ActivityReport &&
+        (activity.ActivityReport.status != "no"
+          ? "Reported"
+          : "Not reported") !== filterReportStatus
+      )
+        return false
+      return true
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.date)
+      const dateB = new Date(b.date)
+      if (sortOrder === "asc") {
+        return dateA.getTime() - dateB.getTime()
+      } else {
+        return dateB.getTime() - dateA.getTime()
+      }
+    })
+
   const fetchAthlete = async () => {
     const response = await fetch(`/api/athletes/${id}`)
     const data = (await response.json()) as ResponseData
@@ -60,6 +99,28 @@ export default function Athlete() {
     } else {
       console.error(data.error)
     }
+  }
+
+  const handleDuplicateActivity = async (activityId: number) => {
+    const response = await fetch(
+      `/api/athletes/${id}/activities/${activityId}`,
+      {
+        method: "POST",
+      },
+    )
+
+    const data = (await response.json()) as ResponseData
+
+    if (data.success) {
+      fetchAthlete().catch(console.error)
+    } else {
+      console.error(data.error)
+    }
+  }
+
+  const handleDownloadActivity = async (activityId: number) => {
+    // TODO: Download activity as excel file
+    console.log(athlete?.activities?.find((a) => a.id === activityId))
   }
 
   return (
@@ -173,13 +234,82 @@ export default function Athlete() {
               Økter m/ rapporter
             </h2>
             <p className="mb-4">
-              TODO: Vis i tabell? Skal kunne: Filtrere på type aktivitet og tag.
-              Kunne filtrere på status til rapporten. Kunne sortere etter dato.
-              Hver rad skal vise: Status på økten/rapporten, duplisere økten
-              (uten svar), slette økten, endre økten, laste ned økten som excel
-              (kun om den har rapport), rapportere økten om den ikke har
-              rapport.
+              TODO: Filtrere på type aktivitet og tag. Kunne filtrere på status
+              til rapporten. Kunne sortere etter dato. Hver rad skal vise:
+              Status på økten/rapporten, duplisere økten (uten svar), slette
+              økten, endre økten, laste ned økten som excel (kun om den har
+              rapport), rapportere økten om den ikke har rapport.
             </p>
+
+            <div className="mb-4">
+              <label className="font-medium text-gray-700 dark:text-gray-200">
+                Type:{" "}
+                <select
+                  value={filterSport ?? ""}
+                  onChange={(e) => {
+                    setFilterSport(e.target.value || null)
+                  }}
+                  className="mr-4 mt-1 w-32 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="">Alle</option>
+                  {sports.map((sport) => (
+                    <option key={sport} value={sport}>
+                      {sport}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="font-medium text-gray-700 dark:text-gray-200">
+                Tagger:{" "}
+                <select
+                  value={filterTag ?? ""}
+                  onChange={(e) => {
+                    setFilterTag(e.target.value || null)
+                  }}
+                  className="mr-4 mt-1 w-32 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="">Alle</option>
+                  {tags.map((tag) => (
+                    <option key={tag} value={tag}>
+                      {tag}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="font-medium text-gray-700 dark:text-gray-200">
+                Rapport status:{" "}
+                <select
+                  value={filterReportStatus ?? ""}
+                  onChange={(e) => {
+                    setFilterReportStatus(e.target.value || null)
+                  }}
+                  className="mr-4 mt-1 w-32 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="">Alle</option>
+                  {reportStatuses.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="font-medium text-gray-700 dark:text-gray-200">
+                Dato sortering:{" "}
+                <select
+                  value={sortOrder}
+                  onChange={(e) => {
+                    setSortOrder(e.target.value as "asc" | "desc")
+                  }}
+                  className="mr-4 mt-1 w-32 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="asc">Stigende</option>
+                  <option value="desc">Synkende</option>
+                </select>
+              </label>
+            </div>
 
             <table className="min-w-full divide-y divide-gray-200 border dark:divide-gray-700 dark:bg-gray-800">
               <thead className="bg-gray-50 dark:bg-gray-900">
@@ -217,7 +347,7 @@ export default function Athlete() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-                {athlete.activities?.map((activity) => (
+                {filteredAndSortedActivities?.map((activity) => (
                   <tr key={activity.id}>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 transition-colors duration-200 ease-in-out hover:text-black dark:text-gray-300 dark:hover:text-white">
                       <Link href={`/athletes/${id}/activities/${activity.id}`}>
@@ -246,6 +376,20 @@ export default function Athlete() {
                       >
                         Slett
                       </button>
+                      <button
+                        onClick={() => handleDuplicateActivity(activity.id)}
+                        className="mr-2 rounded bg-blue-600 px-2 py-1 text-white hover:bg-blue-700"
+                      >
+                        Dupliser (TODO)
+                      </button>
+                      {activity.ActivityReport && (
+                        <button
+                          onClick={() => handleDownloadActivity(activity.id)}
+                          className="mr-2 rounded bg-green-600 px-2 py-1 text-white hover:bg-green-700"
+                        >
+                          Last ned (TODO)
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
