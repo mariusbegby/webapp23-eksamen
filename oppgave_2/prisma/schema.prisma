@@ -20,14 +20,35 @@ model Athlete {
   reports    ActivityReport[]
 }
 
+model Activity {
+  id              Int              @id @default(autoincrement())
+  date            DateTime
+  name            String
+  tags            String
+  sport           String
+  athleteId       Int
+  Athlete         Athlete          @relation(fields: [athleteId], references: [id])
+  contestId       Int?
+  TrainingContest TrainingContest? @relation(fields: [contestId], references: [id])
+  goalId          Int?
+  TrainingGoal    TrainingGoal?    @relation(fields: [goalId], references: [id])
+  intervals       Interval[]
+  questions       Question[]
+  metricOptions   MetricOptions    @relation(fields: [metricOptionsId], references: [id])
+  metricOptionsId String
+  reportId        Int?
+  ActivityReport  ActivityReport?  @relation(fields: [reportId], references: [id])
+}
+
 model TrainingGoal {
-  id        Int      @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   name      String
   date      DateTime
   goal      Int
   comment   String?
   athleteId Int
-  Athlete   Athlete  @relation(fields: [athleteId], references: [id])
+  Athlete   Athlete    @relation(fields: [athleteId], references: [id])
+  Activity  Activity[]
 }
 
 model TrainingContest {
@@ -64,28 +85,13 @@ model Meta {
   intensityZones IntensityZone[]
 }
 
-model Activity {
-  id                Int              @id @default(autoincrement())
-  date              DateTime
-  name              String
-  tags              String
-  sport             String
-  athleteId         Int
-  Athlete           Athlete          @relation(fields: [athleteId], references: [id])
-  trainingContestId Int?
-  TrainingContest   TrainingContest? @relation(fields: [trainingContestId], references: [id])
-  intervals         Interval[]
-  questions         Question[]
-  metricOptions     MetricOptions    @relation(fields: [metricOptionsId], references: [id])
-  metricOptionsId   String
-}
-
 model ActivityReport {
-  id        Int      @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   date      DateTime
   athleteId Int
   status    String
-  Athlete   Athlete  @relation(fields: [athleteId], references: [id])
+  Athlete   Athlete    @relation(fields: [athleteId], references: [id])
+  Activity  Activity[]
 }
 
 model MetricOptions {

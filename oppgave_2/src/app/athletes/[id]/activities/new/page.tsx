@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import type { MetricOptions, Question, Sport } from "@/types"
+import type { Athlete, MetricOptions, Question, Sport } from "@/types"
 import { usePathname } from "next/navigation"
 
 import { Page } from "@/components/PageTemplate"
@@ -19,12 +19,20 @@ type ActivityForm = {
   metricOptions: MetricOptions
   questionIds: string[]
   intervals: Interval[]
+  trainingGoalId?: string
+  contestId?: string
 }
 
 type ResponseDataNewActivity = {
   success: boolean
   error?: string
   data?: JSON
+}
+
+type ResponseDataAthlete = {
+  success: boolean
+  data: Athlete
+  error?: string
 }
 
 type ResponseDataQuestions = {
@@ -37,6 +45,7 @@ export default function NewActivity() {
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
 
+  const [athlete, setAthlete] = useState<Athlete | null>(null)
   const [questions, setQuestions] = useState<Question[]>([])
 
   const pathname = usePathname()
@@ -63,6 +72,8 @@ export default function NewActivity() {
         zone: "1",
       },
     ],
+    trainingGoalId: "",
+    contestId: "",
   })
 
   const handleOptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,6 +107,23 @@ export default function NewActivity() {
     fetchQuestions().catch(console.error)
   }, [])
 
+  useEffect(() => {
+    const fetchAthleteData = async () => {
+      const response = await fetch(`/api/athletes/${id}`)
+      const data = (await response.json()) as ResponseDataAthlete
+
+      console.log("data", data)
+
+      if (data.success) {
+        setAthlete(data.data)
+      } else {
+        console.error(data.error)
+      }
+    }
+
+    fetchAthleteData().catch(console.error)
+  }, [id])
+
   const handleNumQuestionsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.target.value
     if (value === "") {
@@ -107,7 +135,9 @@ export default function NewActivity() {
     }
     setNumQuestions(parseInt(value))
     setForm((prevForm) => {
-      const updatedQuestionIds = Array(parseInt(value)).fill(questions[0].id)
+      const updatedQuestionIds: string[] = Array(parseInt(value)).fill(
+        questions[0].id,
+      ) as string[]
       return { ...prevForm, questionIds: updatedQuestionIds }
     })
   }
@@ -142,28 +172,6 @@ export default function NewActivity() {
       return {
         ...prevForm,
         intervals: prevForm.intervals.slice(0, newNumIntervals),
-      }
-    }
-  }
-
-  const updateQuestions = (
-    prevForm: ActivityForm,
-    newNumQuestions: number,
-  ): ActivityForm => {
-    if (newNumQuestions > prevForm.questionIds.length) {
-      return {
-        ...prevForm,
-        questionIds: [
-          ...prevForm.questionIds,
-          ...Array<string>(newNumQuestions - prevForm.questionIds.length).fill(
-            "",
-          ),
-        ],
-      }
-    } else {
-      return {
-        ...prevForm,
-        questionIds: prevForm.questionIds.slice(0, newNumQuestions),
       }
     }
   }
@@ -229,7 +237,11 @@ export default function NewActivity() {
             zone: "1",
           },
         ],
+        trainingGoalId: "",
+        contestId: "",
       })
+      setNumQuestions(1)
+      setNumIntervals(1)
       const responseData = (await response.json()) as ResponseDataNewActivity
       console.log(responseData)
     } else {
@@ -383,7 +395,7 @@ export default function NewActivity() {
           ))}
         </fieldset>
 
-        <fieldset className="space-y-4">
+        <fieldset className="mb-8 space-y-4">
           <legend className="text-lg font-bold text-gray-900 dark:text-gray-200">
             Intervaller
           </legend>
@@ -488,6 +500,56 @@ export default function NewActivity() {
             </div>
           ))}
         </fieldset>
+
+        <fieldset className="space-y-4">
+          <legend className="text-lg font-bold text-gray-900 dark:text-gray-200">
+            Treningsmål og konkurranse
+          </legend>
+
+          <div className="flex space-x-4">
+            <div className="flex-1">
+              <label className="block font-medium text-gray-700 dark:text-gray-200">
+                Treningsmål:
+                <select
+                  name="trainingGoalId"
+                  value={form.trainingGoalId}
+                  onChange={handleGeneralInfoChange}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="">Velg treningsmål</option>
+                  {athlete?.goals?.map((trainingGoal) => (
+                    <option
+                      key={trainingGoal.id}
+                      value={trainingGoal.id.toString()}
+                    >
+                      {new Date(trainingGoal.date).getUTCFullYear()} -{" "}
+                      {trainingGoal.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+            <div className="flex-1">
+              <label className="block font-medium text-gray-700 dark:text-gray-200">
+                Konkurranse:
+                <select
+                  name="contestId"
+                  value={form.contestId}
+                  onChange={handleGeneralInfoChange}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="">Velg konkurranse</option>
+                  {athlete?.contests?.map((contest) => (
+                    <option key={contest.id} value={contest.id.toString()}>
+                      {new Date(contest.date).getUTCFullYear()} - {contest.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          </div>
+        </fieldset>
+
         <button
           type="submit"
           className="mt-4 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"

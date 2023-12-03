@@ -23,6 +23,8 @@ type ActivityRequestBody = {
   questionIds: string[]
   metricOptions: MetricOptions
   intervals: Interval[]
+  contestId?: string
+  trainingGoalId?: string
 }
 
 export async function GET(request: NextRequest) {
@@ -39,6 +41,9 @@ export async function GET(request: NextRequest) {
         questions: true,
         intervals: true,
         metricOptions: true,
+        TrainingContest: true,
+        TrainingGoal: true,
+        ActivityReport: true,
       },
     })
 
@@ -56,8 +61,17 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const { date, name, tags, sport, questionIds, metricOptions, intervals } =
-    (await request.json()) as ActivityRequestBody
+  const {
+    date,
+    name,
+    tags,
+    sport,
+    questionIds,
+    metricOptions,
+    intervals,
+    contestId,
+    trainingGoalId,
+  } = (await request.json()) as ActivityRequestBody
   const athleteId = request.nextUrl.pathname.split("/")[3]
 
   if (
@@ -78,28 +92,40 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const activity = await prisma.activity.create({
-      data: {
-        date: new Date(date),
-        name: name,
-        tags: tags,
-        sport: sport,
-        Athlete: {
-          connect: { userId: athleteId },
-        },
-        questions: {
-          connect: questionIds.map((questionId) => ({ id: questionId })),
-        },
-        intervals: {
-          create: intervals.map((interval) => ({
-            duration: parseInt(interval.duration),
-            zone: parseInt(interval.zone),
-          })),
-        },
-        metricOptions: {
-          create: metricOptions,
-        },
+    const data = {
+      date: new Date(date),
+      name: name,
+      tags: tags,
+      sport: sport,
+      Athlete: {
+        connect: { userId: athleteId },
       },
+      questions: {
+        connect: questionIds.map((questionId) => ({ id: questionId })),
+      },
+      intervals: {
+        create: intervals.map((interval) => ({
+          duration: parseInt(interval.duration),
+          zone: parseInt(interval.zone),
+        })),
+      },
+      metricOptions: {
+        create: metricOptions,
+      },
+      ...(contestId && {
+        TrainingContest: {
+          connect: { id: parseInt(contestId) },
+        },
+      }),
+      ...(trainingGoalId && {
+        TrainingGoal: {
+          connect: { id: parseInt(trainingGoalId) },
+        },
+      }),
+    }
+
+    const activity = await prisma.activity.create({
+      data: data,
     })
 
     return NextResponse.json({ success: true, data: activity })

@@ -19,8 +19,19 @@ export default function Athlete() {
 
   const [athlete, setAthlete] = useState<Athlete | null>(null)
 
+  const fetchAthlete = async () => {
+    const response = await fetch(`/api/athletes/${id}`)
+    const data = (await response.json()) as ResponseData
+
+    if (data.success) {
+      setAthlete(data.data)
+    } else {
+      console.error(data.error)
+    }
+  }
+
   useEffect(() => {
-    const fetchAthlete = async () => {
+    const fetchAthletes = async () => {
       const response = await fetch(`/api/athletes/${id}`)
       const data = (await response.json()) as ResponseData
 
@@ -31,8 +42,25 @@ export default function Athlete() {
       }
     }
 
-    fetchAthlete().catch(console.error)
+    fetchAthletes().catch(console.error)
   }, [id])
+
+  const handleDeleteActivity = async (activityId: number) => {
+    const response = await fetch(
+      `/api/athletes/${id}/activities/${activityId}`,
+      {
+        method: "DELETE",
+      },
+    )
+
+    const data = (await response.json()) as ResponseData
+
+    if (data.success) {
+      fetchAthlete().catch(console.error)
+    } else {
+      console.error(data.error)
+    }
+  }
 
   return (
     <Page title="Utøverdetaljer" backButtonLocation="/">
@@ -180,10 +208,16 @@ export default function Athlete() {
                   >
                     Tags
                   </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+                  >
+                    Handlinger
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-                {athlete.activities.map((activity) => (
+                {athlete.activities?.map((activity) => (
                   <tr key={activity.id}>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 transition-colors duration-200 ease-in-out hover:text-black dark:text-gray-300 dark:hover:text-white">
                       <Link href={`/athletes/${id}/activities/${activity.id}`}>
@@ -198,6 +232,20 @@ export default function Athlete() {
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
                       {activity.tags}
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                      <Link
+                        href={`/athletes/${id}/activities/${activity.id}/edit`}
+                        className="mr-2 rounded bg-indigo-600 px-2 py-1 text-white hover:bg-indigo-700"
+                      >
+                        Endre
+                      </Link>
+                      <button
+                        onClick={() => handleDeleteActivity(activity.id)}
+                        className="mr-2 rounded bg-red-600 px-2 py-1 text-white hover:bg-red-700"
+                      >
+                        Slett
+                      </button>
                     </td>
                   </tr>
                 ))}
