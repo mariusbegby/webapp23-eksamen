@@ -73,6 +73,10 @@ export async function PUT(request: NextRequest) {
   } = (await request.json()) as ActivityRequestBody
 
   try {
+    await prisma.interval.deleteMany({
+      where: { activityId: activityId },
+    })
+
     const data = {
       date: new Date(date),
       name: name,
@@ -82,19 +86,6 @@ export async function PUT(request: NextRequest) {
         connect: questionIds.map((questionId) => ({ id: questionId })),
       },
       intervals: {
-        upsert: intervals
-          .filter((interval) => interval.id)
-          .map((interval) => ({
-            where: { id: interval.id },
-            update: {
-              duration: parseInt(interval.duration),
-              zone: parseInt(interval.zone),
-            },
-            create: {
-              duration: parseInt(interval.duration),
-              zone: parseInt(interval.zone),
-            },
-          })),
         create: intervals
           .filter((interval) => !interval.id)
           .map((interval) => ({

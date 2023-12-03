@@ -108,8 +108,6 @@ export default function EditActivity() {
       const response = await fetch(`/api/athletes/${id}`)
       const data = (await response.json()) as ResponseDataAthlete
 
-      console.log("data", data)
-
       if (data.success) {
         setAthlete(data.data)
       } else {
@@ -126,8 +124,6 @@ export default function EditActivity() {
         `/api/athletes/${id}/activities/${activityId}`,
       )
       const data = (await response.json()) as ResponseDataActivity
-
-      console.log("data", data)
 
       if (data.success && data.data) {
         setForm({
@@ -250,11 +246,12 @@ export default function EditActivity() {
       },
     )
 
-    if (response.ok) {
+    const data = (await response.json()) as ResponseDataActivity
+    const updatedActivity = data.data
+
+    if (data.success && updatedActivity) {
       setError(null)
       setMessage("Økten ble oppdatert.")
-
-      const updatedActivity = (await response.json()) as Activity
 
       setForm({
         date: new Date(updatedActivity.date).toISOString().split("T")[0],
