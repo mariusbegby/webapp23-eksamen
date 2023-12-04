@@ -51,7 +51,6 @@ export default function NewContest() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(contest)
 
     const response = await fetch(`/api/athletes/${id}/contests`, {
       method: "POST",
@@ -73,8 +72,6 @@ export default function NewContest() {
       })
       setError(null)
       setMessage("Konkurransen ble opprettet!")
-      const responseData = (await response.json()) as ResponseData
-      console.log(responseData)
     } else {
       const data = (await response.json()) as ResponseData
 

@@ -33,8 +33,6 @@ export function AthleteList({ athletes }: AthleteListProps) {
       ).map(activity => ({ ...activity, athlete })) ?? [],
   )
 
-  console.log(tasks);
-
   return (
     <>
       <h2 className="text-lg font-bold">Oppgaver</h2>

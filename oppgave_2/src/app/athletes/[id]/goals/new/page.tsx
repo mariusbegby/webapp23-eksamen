@@ -44,7 +44,6 @@ export default function NewTrainingGoal() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log(trainingGoal)
 
     const response = await fetch(`/api/athletes/${id}/goals`, {
       method: "POST",
@@ -63,8 +62,6 @@ export default function NewTrainingGoal() {
       })
       setError(null)
       setMessage("Treningsmålet ble opprettet!")
-      const responseData = (await response.json()) as ResponseData
-      console.log(responseData)
     } else {
       const data = (await response.json()) as ResponseData
 

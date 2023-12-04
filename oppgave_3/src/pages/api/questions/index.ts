@@ -106,7 +106,7 @@ export default async function handler(
         res.status(201).json({ status: true, data })
         return
       } catch (error) {
-        console.log('ERROR', error)
+        console.error(error)
         res
           .status(500)
           .json({ status: false, error: { message: 'Create Question Failed' } })

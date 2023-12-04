@@ -127,8 +127,6 @@ export default function EditActivity() {
       )
       const data = (await response.json()) as ResponseDataActivity
 
-      console.log(data)
-
       if (data.success && data.data) {
         setForm({
           date: new Date(data.data.date).toISOString().split("T")[0],

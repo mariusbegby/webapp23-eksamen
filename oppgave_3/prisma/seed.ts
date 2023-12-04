@@ -87,7 +87,7 @@ const createQuestion = async (count: number) => {
       throw new Error('Poll not available')
     }
   } catch (error) {
-    console.log('ERROR', error)
+    console.error(error)
     throw error
   }
 }
