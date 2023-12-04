@@ -94,7 +94,6 @@ export default function Home() {
 
   const restart = () => {
     setIsDone(false)
-    // TODO: get new tasks
 
     setCurrentTask(tasks[0])
   }
