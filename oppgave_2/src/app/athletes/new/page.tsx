@@ -127,7 +127,7 @@ export default function NewAthlete() {
         </div>
         <div>
           <label className="block font-medium text-gray-700 dark:text-gray-200">
-            Sport: <span className="text-red-600">*</span>
+            Sport:
             <select
               name="sport"
               value={athlete.sport}
@@ -147,7 +147,7 @@ export default function NewAthlete() {
         </div>
         <div>
           <label className="block font-medium text-gray-700 dark:text-gray-200">
-            Kjønn: <span className="text-red-600">*</span>
+            Kjønn:
             <select
               name="gender"
               value={athlete.gender}

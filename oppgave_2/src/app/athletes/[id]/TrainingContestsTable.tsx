@@ -6,7 +6,7 @@ type TrainingContestsProps = {
 
 export default function TrainingContests({ contests }: TrainingContestsProps) {
   return (
-    <div className="col-span-full">
+    <div className="col-span-full mt-8">
       <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
         Konkurranser
       </h2>

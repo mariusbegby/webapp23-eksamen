@@ -21,10 +21,6 @@ const links = [
     label: "Legg til nytt spørsmål",
   },
   {
-    href: "/templates/new",
-    label: "Legg til ny mal (TODO)",
-  },
-  {
     href: "/import",
     label: "Importer utøvere",
   },

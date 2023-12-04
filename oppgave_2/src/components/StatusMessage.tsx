@@ -11,7 +11,7 @@ export default function StatusMessage({
     <>
       {errorMessage && (
         <div
-          className="relative rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
+          className="relative mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
           role="alert"
         >
           <strong className="font-bold">Feilmelding: </strong>
@@ -21,7 +21,7 @@ export default function StatusMessage({
 
       {statusMessage && (
         <div
-          className="relative rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700"
+          className="relative mb-4 rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700"
           role="alert"
         >
           <strong className="font-bold">Status: </strong>
