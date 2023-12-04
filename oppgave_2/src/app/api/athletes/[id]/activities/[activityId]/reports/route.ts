@@ -2,6 +2,7 @@ import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
 import { prisma } from "@/lib/prisma"
+import { Athlete, IntensityZone } from "@/types"
 
 type ActivityReportRequestBody = {
   date: string
@@ -34,6 +35,47 @@ type ReportQuestion = {
   answer: string
 }
 
+function generateIntensityZones(athlete: Athlete) {
+  const zones: IntensityZone[] = []
+
+  if (!athlete.meta.intensityZones) return
+
+  const percentages = [0.5, 0.6, 0.7, 0.8, 0.9]
+
+  for (const zone of athlete.meta.intensityZones) {
+    percentages.forEach((percentage, index) => {
+      if (!athlete.meta.heartrate || !athlete.meta.watt || !athlete.meta.speed)
+        return
+
+      switch (zone.type) {
+        case "heartrate":
+          zones.push({
+            type: zone.type,
+            zone: index + 1,
+            intensity: athlete.meta.heartrate * percentage,
+          })
+          break
+        case "watt":
+          zones.push({
+            type: zone.type,
+            zone: index + 1,
+            intensity: athlete.meta.watt * percentage,
+          })
+          break
+        case "speed":
+          zones.push({
+            type: zone.type,
+            zone: index + 1,
+            intensity: athlete.meta.speed * percentage,
+          })
+          break
+      }
+    })
+  }
+
+  return zones
+}
+
 export async function POST(request: NextRequest) {
   const { date, status, ReportIntervals, ReportQuestions } =
     (await request.json()) as ActivityReportRequestBody
@@ -53,6 +95,71 @@ export async function POST(request: NextRequest) {
       },
       { status: 400 },
     )
+  }
+
+  const maxHeartRate = Math.max(
+    ...ReportIntervals.map((i) => parseInt(i.heartRateMax ?? "0")),
+  )
+  const maxSpeed = Math.max(
+    ...ReportIntervals.map((i) => parseInt(i.speedMax ?? "0")),
+  )
+  const maxWatt = Math.max(
+    ...ReportIntervals.map((i) => parseInt(i.wattMax ?? "0")),
+  )
+
+  const athlete = await prisma.athlete.findUnique({
+    where: { userId: athleteId },
+    include: { meta: true },
+  })
+
+  if (athlete) {
+    if (
+      maxHeartRate > athlete.meta.heartrate ||
+      maxSpeed > athlete.meta.speed ||
+      maxWatt > athlete.meta.watt
+    ) {
+      const updatedAthlete = await prisma.athlete.update({
+        where: { userId: athleteId },
+        data: {
+          meta: {
+            update: {
+              heartrate:
+                maxHeartRate > 0
+                  ? Math.max(maxHeartRate, athlete.meta.heartrate)
+                  : athlete.meta.heartrate,
+              speed:
+                maxSpeed > 0
+                  ? Math.max(maxSpeed, athlete.meta.speed)
+                  : athlete.meta.speed,
+              watt:
+                maxWatt > 0
+                  ? Math.max(maxWatt, athlete.meta.watt)
+                  : athlete.meta.watt,
+            },
+          },
+        },
+        include: { meta: true },
+      })
+
+      const zones = generateIntensityZones(updatedAthlete)
+      if (zones) {
+        for (const zone of zones) {
+          await prisma.intensityZone.update({
+            where: {
+              metaId_type_zone: {
+                metaId: updatedAthlete.meta.id,
+                type: zone.type,
+                zone: zone.zone,
+              },
+            },
+            data: {
+              intensity: zone.intensity,
+              type: zone.type,
+            },
+          })
+        }
+      }
+    }
   }
 
   try {
