@@ -8,6 +8,8 @@ import { usePathname } from "next/navigation"
 
 import { Page } from "@/components/PageTemplate"
 import AthleteActivities from "./ActivitiesTable"
+import AthleteGeneralInfo from "./AthleteGeneralInfo"
+import PerformanceData from "./PerformanceData"
 import TrainingContests from "./TrainingContestsTable"
 import TrainingGoals from "./TrainingGoalsTable"
 
@@ -22,13 +24,12 @@ export default function Athlete() {
   const id = pathname.split("/").pop()
 
   const [athlete, setAthlete] = useState<Athlete | null>(null)
-
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc")
   const [filterSport, setFilterSport] = useState<string | null>(null)
   const [filterTag, setFilterTag] = useState<string | null>(null)
   const [filterReportStatus, setFilterReportStatus] = useState<string | null>(
     null,
   )
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc")
 
   const filteredAndSortedActivities = athlete?.activities
     ?.filter((activity) => {
@@ -53,7 +54,7 @@ export default function Athlete() {
       }
     })
 
-  const fetchAthlete = async () => {
+  const fetchAthletesAgain = async () => {
     const response = await fetch(`/api/athletes/${id}`)
     const data = (await response.json()) as ResponseData
 
@@ -87,7 +88,7 @@ export default function Athlete() {
 
     if (data.success) {
       // eslint-disable-next-line no-console
-      fetchAthlete().catch(console.error)
+      fetchAthletesAgain().catch(console.error)
     }
   }
 
@@ -142,42 +143,10 @@ export default function Athlete() {
       </div>
 
       {athlete && (
-        <section className="grid grid-cols-1 gap-4 md:grid-cols-2 ">
-          <div className="">
-            <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
-              Utøverinformasjon
-            </h2>
-            <p className="text-lg text-gray-800 dark:text-gray-100">
-              Bruker ID: {athlete.userId}
-            </p>
-            <p className="text-lg text-gray-800 dark:text-gray-100">
-              Sport: {athlete.sport}
-            </p>
-            <p className="text-lg text-gray-800 dark:text-gray-100">
-              Kjønn: {athlete.gender}
-            </p>
-          </div>
+        <section className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <AthleteGeneralInfo athlete={athlete} />
 
-          <div className="">
-            <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
-              Ytelsesdata
-            </h2>
-            {athlete.meta.heartrate !== null && (
-              <p className="text-lg text-gray-800 dark:text-gray-100">
-                Hjertefrekvens: {athlete.meta.heartrate} slag pr. minutt
-              </p>
-            )}
-            {athlete.meta.watt !== null && (
-              <p className="text-lg text-gray-800 dark:text-gray-100">
-                Terskelwatt: {athlete.meta.watt} watt
-              </p>
-            )}
-            {athlete.meta.speed !== null && (
-              <p className="text-lg text-gray-800 dark:text-gray-100">
-                Terskelfart: {athlete.meta.speed} km/t
-              </p>
-            )}
-          </div>
+          <PerformanceData meta={athlete.meta} />
 
           <TrainingGoals goals={athlete.goals} />
 

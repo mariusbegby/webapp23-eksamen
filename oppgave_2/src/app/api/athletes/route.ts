@@ -66,9 +66,9 @@ export async function POST(request: NextRequest) {
   const { userId, gender, sport, meta } =
     (await request.json()) as AthleteRequestBody
 
-  if (!gender || !sport) {
+  if (!gender || !sport || !meta.heartrate || !meta.watt || !meta.speed) {
     return NextResponse.json(
-      { success: false, error: "Sport and gender are required" },
+      { success: false, error: "Sport, gender and meta are required" },
       { status: 400 },
     )
   }

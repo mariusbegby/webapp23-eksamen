@@ -17,6 +17,7 @@ type ResponseData = {
 
 export default function NewAthlete() {
   const [athlete, setAthlete] = useState<Athlete>({
+    id: "",
     userId: uuidv4(),
     sport: "",
     gender: "",
@@ -76,6 +77,7 @@ export default function NewAthlete() {
         `Utøver med bruker id ${responseData.data?.userId} ble lagt til.`,
       )
       setAthlete({
+        id: "",
         userId: uuidv4(),
         sport: "",
         gender: "",
@@ -92,7 +94,7 @@ export default function NewAthlete() {
       if (data.error) {
         setMessage(null)
         switch (data.error) {
-          case "Sport and gender are required":
+          case "Sport, gender and meta are required":
             setError("Feltene sport og kjønn må fylles ut.")
             break
           default:

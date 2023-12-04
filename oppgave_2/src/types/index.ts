@@ -61,7 +61,7 @@ export type Interval = {
   zone: number
 }
 
-type Meta = {
+export type Meta = {
   id: number
   heartrate: number | null
   watt: number | null

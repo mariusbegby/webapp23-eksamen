@@ -6,8 +6,8 @@ type TrainingGoalsProps = {
 
 export default function TrainingGoals({ goals }: TrainingGoalsProps) {
   return (
-    <div className="">
-      <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
+    <div className="col-span-full">
+      <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100 ">
         Treningsmål
       </h2>
       {goals && goals.length > 0 ? (

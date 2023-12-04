@@ -44,7 +44,7 @@ export default function AthleteActivities({
   return (
     <div className="col-span-full mt-8">
       <h2 className="mb-4 text-xl font-bold text-gray-800 dark:text-gray-100">
-        Traningsoversikt
+        Treningsoversikt
       </h2>
       {activities && activities.length > 0 ? (
         <>
