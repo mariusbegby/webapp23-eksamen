@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import type { Athlete } from "@/types"
-import Link from "next/link"
 import { v4 } from "uuid"
 
 import { Page } from "@/components/PageTemplate"
