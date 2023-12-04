@@ -50,7 +50,7 @@ export async function POST() {
               translatedSport = "Ski"
               break
             case "triathlon":
-              translatedSport = "Triathlon"
+              translatedSport = "Triatlon"
               break
             case "swimming":
               translatedSport = "Svømming"

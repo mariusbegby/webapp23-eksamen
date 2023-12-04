@@ -18,6 +18,9 @@ export default function TrainingContests({ contests }: TrainingContestsProps) {
                 Navn
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200">
+                Mål
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200">
                 Lokasjon
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200">
@@ -36,6 +39,9 @@ export default function TrainingContests({ contests }: TrainingContestsProps) {
               <tr key={contest.id}>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
                   {contest.name}
+                </td>
+                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                  {contest.goal}
                 </td>
                 <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
                   {contest.location}

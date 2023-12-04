@@ -217,8 +217,8 @@ export default function NewReport() {
       if (data.error) {
         setMessage(null)
         switch (data.error) {
-          case "bla bla bla":
-            setError("bla bla bla")
+          case "date, status, ReportIntervals and ReportQuestions are required":
+            setError("Alle feltene utenom kommentar må fylles ut")
             break
           default:
             setError(
@@ -574,7 +574,7 @@ export default function NewReport() {
 
         <button
           type="submit"
-          className="mt-4 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          className="mt-2 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
         >
           Opprett rapport
         </button>

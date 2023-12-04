@@ -50,13 +50,13 @@ export default function AthleteActivities({
         <>
           <div className="mb-4">
             <label className="font-medium text-gray-700 dark:text-gray-200">
-              Type:{" "}
+              <strong>Type:</strong>{" "}
               <select
                 value={filterSport ?? ""}
                 onChange={(e) => {
                   setFilterSport(e.target.value || null)
                 }}
-                className="mr-4 mt-1 w-32 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                className="ml-2 mr-8 mt-1 w-32 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
               >
                 <option value="">Alle</option>
                 {sports.map((sport) => (
@@ -68,13 +68,13 @@ export default function AthleteActivities({
             </label>
 
             <label className="font-medium text-gray-700 dark:text-gray-200">
-              Tagger:{" "}
+              <strong>Tagger:</strong>{" "}
               <select
                 value={filterTag ?? ""}
                 onChange={(e) => {
                   setFilterTag(e.target.value || null)
                 }}
-                className="mr-4 mt-1 w-40 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                className="ml-2 mr-8 mt-1 w-40 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
               >
                 <option value="">Alle</option>
                 {tags.map((tag) => (
@@ -86,13 +86,13 @@ export default function AthleteActivities({
             </label>
 
             <label className="font-medium text-gray-700 dark:text-gray-200">
-              Rapport status:{" "}
+              <strong>Rapport status:</strong>{" "}
               <select
                 value={filterReportStatus ?? ""}
                 onChange={(e) => {
                   setFilterReportStatus(e.target.value || null)
                 }}
-                className="mr-4 mt-1 w-40 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                className="ml-2 mr-8 mt-1 w-40 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
               >
                 <option value="">Alle</option>
                 {reportStatuses.map((status) => (
@@ -104,13 +104,14 @@ export default function AthleteActivities({
             </label>
 
             <label className="font-medium text-gray-700 dark:text-gray-200">
-              Dato sortering:{" "}
+              <strong>Dato sortering:</strong>
+              {"  "}
               <select
                 value={sortOrder}
                 onChange={(e) => {
                   setSortOrder(e.target.value as "asc" | "desc")
                 }}
-                className="mr-4 mt-1 w-32 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                className="ml-2 mr-8 mt-1 w-32 rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
               >
                 <option value="asc">Stigende</option>
                 <option value="desc">Synkende</option>
@@ -143,7 +144,7 @@ export default function AthleteActivities({
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
                 >
-                  Tags
+                  Tagger
                 </th>
                 <th
                   scope="col"
@@ -182,15 +183,18 @@ export default function AthleteActivities({
                       : "Ingen rapport"}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
-                    {activity.ActivityReport ? (
-                      <Link
-                        href={`/athletes/${id}/activities/${activity.id}/reports/${activity.ActivityReport.id}`}
+                    {activity.ActivityReport && (
+                      <button
+                        onClick={() => {
+                          handleDownloadActivity(activity.id)
+                        }}
+                        className="mr-2 rounded-md border border-transparent bg-indigo-600 px-2 py-1 text-sm font-medium text-white hover:bg-indigo-700"
                       >
-                        <button className="mr-2 rounded-md border border-transparent bg-indigo-600 px-2 py-1 text-sm font-medium text-white hover:bg-indigo-700">
-                          Se rapport
-                        </button>
-                      </Link>
-                    ) : (
+                        Last ned
+                      </button>
+                    )}
+
+                    {!activity.ActivityReport && (
                       <Link
                         href={`/athletes/${id}/activities/${activity.id}/reports/new`}
                       >
@@ -207,16 +211,6 @@ export default function AthleteActivities({
                         Endre
                       </button>
                     </Link>
-                    {activity.ActivityReport && (
-                      <button
-                        onClick={() => {
-                          handleDownloadActivity(activity.id)
-                        }}
-                        className="mr-2 rounded-md border border-transparent bg-indigo-600 px-2 py-1 text-sm font-medium text-white hover:bg-indigo-700"
-                      >
-                        Last ned
-                      </button>
-                    )}
                     <button
                       onClick={() => {
                         handleDeleteActivity(activity.id)

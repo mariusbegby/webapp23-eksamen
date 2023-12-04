@@ -61,6 +61,12 @@ export function AthleteList({ athletes }: AthleteListProps) {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
                 >
+                  Sport
+                </th>
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+                >
                   Antall intervaller
                 </th>
                 <th
@@ -68,12 +74,6 @@ export function AthleteList({ athletes }: AthleteListProps) {
                   className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
                 >
                   Antall spørsmål
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
-                >
-                  Rapport status
                 </th>
                 <th
                   scope="col"
@@ -101,13 +101,13 @@ export function AthleteList({ athletes }: AthleteListProps) {
                     {task.id}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                    {task.sport}
+                  </td>
+                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
                     {task.questions.length}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
                     {task.intervals.length}
-                  </td>
-                  <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
-                    {task.ActivityReport ? "Rapportert" : "Ikke rapportert"}
                   </td>
                   <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
                     {new Date(task.date).toLocaleDateString("nb-NO")}
