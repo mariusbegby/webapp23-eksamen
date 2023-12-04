@@ -1,4 +1,5 @@
 export type Athlete = {
+  id: string
   userId: string
   gender: string
   sport: string
@@ -8,7 +9,7 @@ export type Athlete = {
   goals?: Goal[]
 }
 
-type Goal = {
+export type Goal = {
   id: number
   name: string
   date: string
@@ -16,7 +17,7 @@ type Goal = {
   comment: string
 }
 
-type Contest = {
+export type Contest = {
   id: number
   name: string
   date: string
