@@ -20,6 +20,7 @@ export function AthleteList({ athletes }: AthleteListProps) {
     try {
       await navigator.clipboard.writeText(text)
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error(err)
     }
   }
