@@ -373,11 +373,24 @@ export default function Athlete() {
                         : "Ingen rapport"}
                     </td>
                     <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
-                      <Link href={`/athletes/${id}`}>
-                        <button className="mr-2 rounded-md border border-transparent bg-indigo-600 px-2 py-1 text-sm font-medium text-white hover:bg-indigo-700">
-                          Rapport (TODO)
-                        </button>
-                      </Link>
+                      {activity.ActivityReport ? (
+                        <Link
+                          href={`/athletes/${id}/activities/${activity.id}/reports/${activity.ActivityReport.id}`}
+                        >
+                          <button className="mr-2 rounded-md border border-transparent bg-indigo-600 px-2 py-1 text-sm font-medium text-white hover:bg-indigo-700">
+                            Se rapport
+                          </button>
+                        </Link>
+                      ) : (
+                        <Link
+                          href={`/athletes/${id}/activities/${activity.id}/reports/new`}
+                        >
+                          <button className="mr-2 rounded-md border border-transparent bg-indigo-600 px-2 py-1 text-sm font-medium text-white hover:bg-indigo-700">
+                            Legg til rapport
+                          </button>
+                        </Link>
+                      )}
+
                       <Link
                         href={`/athletes/${id}/activities/${activity.id}/edit`}
                       >

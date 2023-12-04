@@ -40,6 +40,48 @@ model Activity {
   ActivityReport  ActivityReport?  @relation(fields: [reportId], references: [id])
 }
 
+model ActivityReport {
+  id              Int              @id @default(autoincrement())
+  date            DateTime
+  status          String
+  comment         String?
+  athleteId       Int
+  Athlete         Athlete          @relation(fields: [athleteId], references: [id])
+  Activity        Activity[]
+  ReportIntervals ReportInterval[]
+  ReportQuestions ReportQuestion[]
+}
+
+model ReportInterval {
+  id               String         @id @default(uuid())
+  intensityMin     Int
+  intensityMax     Int
+  intensityAvg     Int
+  heartRateMin     Int
+  heartRateMax     Int
+  heartRateAvg     Int
+  speedMin         Int
+  speedMax         Int
+  speedAvg         Int
+  wattMin          Int
+  wattMax          Int
+  wattAvg          Int
+  duration         Int
+  intervalId       String
+  Interval         Interval       @relation(fields: [intervalId], references: [id])
+  activityReportId Int
+  ActivityReport   ActivityReport @relation(fields: [activityReportId], references: [id])
+}
+
+model ReportQuestion {
+  id               String         @id @default(uuid())
+  answer           String
+  questionId       String
+  Question         Question       @relation(fields: [questionId], references: [id])
+  activityReportId Int
+  ActivityReport   ActivityReport @relation(fields: [activityReportId], references: [id])
+}
+
 model TrainingGoal {
   id        Int        @id @default(autoincrement())
   name      String
@@ -85,15 +127,6 @@ model Meta {
   intensityZones IntensityZone[]
 }
 
-model ActivityReport {
-  id        Int        @id @default(autoincrement())
-  date      DateTime
-  athleteId Int
-  status    String
-  Athlete   Athlete    @relation(fields: [athleteId], references: [id])
-  Activity  Activity[]
-}
-
 model MetricOptions {
   id        String     @id @default(uuid())
   heartrate Boolean
@@ -103,16 +136,18 @@ model MetricOptions {
 }
 
 model Question {
-  id         String     @id @default(uuid())
-  question   String
-  type       String
-  activities Activity[]
+  id             String           @id @default(uuid())
+  question       String
+  type           String
+  activities     Activity[]
+  ReportQuestion ReportQuestion[]
 }
 
 model Interval {
-  id         String   @id @default(uuid())
-  duration   Int
-  zone       Int
-  activityId Int
-  Activity   Activity @relation(fields: [activityId], references: [id])
+  id             String           @id @default(uuid())
+  duration       Int
+  zone           Int
+  activityId     Int
+  Activity       Activity         @relation(fields: [activityId], references: [id])
+  ReportInterval ReportInterval[]
 }

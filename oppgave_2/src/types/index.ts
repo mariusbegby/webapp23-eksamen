@@ -42,6 +42,7 @@ export type Activity = {
 }
 
 type ActivityReport = {
+  id: number
   date: Date
   status: string
 }
@@ -53,7 +54,8 @@ export type MetricOptions = {
   speed: boolean
 }
 
-type Interval = {
+export type Interval = {
+  id: string
   duration: number
   zone: number
 }
