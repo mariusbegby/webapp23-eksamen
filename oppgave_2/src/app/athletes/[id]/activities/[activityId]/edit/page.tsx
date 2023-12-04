@@ -46,6 +46,8 @@ export default function EditActivity() {
   const [message, setMessage] = useState<string | null>(null)
 
   const [athlete, setAthlete] = useState<Athlete | null>(null)
+
+  const [activity, setActivity] = useState<Activity | null>(null)
   const [questions, setQuestions] = useState<Question[]>([])
 
   const pathname = usePathname()
@@ -125,6 +127,8 @@ export default function EditActivity() {
       )
       const data = (await response.json()) as ResponseDataActivity
 
+      console.log(data)
+
       if (data.success && data.data) {
         setForm({
           date: new Date(data.data.date).toISOString().split("T")[0],
@@ -143,6 +147,7 @@ export default function EditActivity() {
 
         setNumIntervals(data.data.intervals.length)
         setNumQuestions(data.data.questions.length)
+        setActivity(data.data)
       } else {
         console.error(data.error)
       }
@@ -296,296 +301,309 @@ export default function EditActivity() {
 
   return (
     <Page title="Oppdater treningsøkt" backButtonLocation={`/athletes/${id}`}>
-      <form onSubmit={handleSubmit}>
-        {error && (
-          <div
-            className="relative mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
-            role="alert"
-          >
-            <strong className="font-bold">Feilmelding: </strong>
-            <span className="block sm:inline"> {error}</span>
-          </div>
-        )}
+      {activity?.ActivityReport ? (
+        <div
+          className="relative rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
+          role="alert"
+        >
+          <strong className="font-bold">
+            Økten er allerede knyttet til en rapport, og kan ikke endres.
+          </strong>
+          <span className="block sm:inline"> {error}</span>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit}>
+          {error && (
+            <div
+              className="relative mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
+              role="alert"
+            >
+              <strong className="font-bold">Feilmelding: </strong>
+              <span className="block sm:inline"> {error}</span>
+            </div>
+          )}
 
-        {message && (
-          <div
-            className="relative mb-4 rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700"
-            role="alert"
-          >
-            <strong className="font-bold">Status: </strong>
-            <span className="block sm:inline"> {message}</span>
-          </div>
-        )}
+          {message && (
+            <div
+              className="relative mb-4 rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700"
+              role="alert"
+            >
+              <strong className="font-bold">Status: </strong>
+              <span className="block sm:inline"> {message}</span>
+            </div>
+          )}
 
-        <fieldset className="mb-8 space-y-4">
-          <legend className="text-lg font-bold text-gray-900 dark:text-gray-200">
-            Generell informasjon
-          </legend>
-          <div>
-            <label className="block font-medium text-gray-700 dark:text-gray-200">
-              Dato:
-              <input
-                type="date"
-                name="date"
-                value={form.date}
-                onChange={handleGeneralInfoChange}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
-              />
-            </label>
-          </div>
-          <div>
-            <label className="block font-medium text-gray-700 dark:text-gray-200">
-              Navn:
-              <input
-                type="text"
-                name="name"
-                placeholder="Navn på økt"
-                value={form.name}
-                onChange={handleGeneralInfoChange}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
-              />
-            </label>
-          </div>
-          <div>
-            <label className="block font-medium text-gray-700 dark:text-gray-200">
-              Tagger (separer med komma):
-              <input
-                type="text"
-                name="tags"
-                placeholder="Tagger for økten"
-                value={form.tags}
-                onChange={handleGeneralInfoChange}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
-              />
-            </label>
-          </div>
-          <div>
-            <label className="block font-medium text-gray-700 dark:text-gray-200">
-              Type aktivitet:
-              <select
-                name="sport"
-                value={form.sport}
-                onChange={handleGeneralInfoChange}
-                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
-              >
-                <option value="">Velg type sport</option>
-                <option value="Løping">Løping</option>
-                <option value="Sykling">Sykling</option>
-                <option value="Ski">Ski</option>
-                <option value="Triatlon">Triatlon</option>
-                <option value="Svømming">Svømming</option>
-                <option value="Styrke">Styrke</option>
-                <option value="Annet">Annet</option>
-              </select>
-            </label>
-          </div>
-        </fieldset>
-
-        <fieldset className="mb-8 space-y-4">
-          <legend className="text-lg font-bold text-gray-900 dark:text-gray-200">
-            Spørsmål
-          </legend>
-          <label className="block font-medium text-gray-700 dark:text-gray-200">
-            Antall spørsmål:
-            <input
-              type="text"
-              min="1"
-              max="10"
-              value={numQuestions}
-              onChange={handleNumQuestionsChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
-            />
-          </label>
-          {form.questionIds.map((questionId, index) => (
-            <div key={index}>
+          <fieldset className="mb-8 space-y-4">
+            <legend className="text-lg font-bold text-gray-900 dark:text-gray-200">
+              Generell informasjon
+            </legend>
+            <div>
               <label className="block font-medium text-gray-700 dark:text-gray-200">
-                Spørsmål {index + 1}:
+                Dato:
+                <input
+                  type="date"
+                  name="date"
+                  value={form.date}
+                  onChange={handleGeneralInfoChange}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                />
+              </label>
+            </div>
+            <div>
+              <label className="block font-medium text-gray-700 dark:text-gray-200">
+                Navn:
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Navn på økt"
+                  value={form.name}
+                  onChange={handleGeneralInfoChange}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                />
+              </label>
+            </div>
+            <div>
+              <label className="block font-medium text-gray-700 dark:text-gray-200">
+                Tagger (separer med komma):
+                <input
+                  type="text"
+                  name="tags"
+                  placeholder="Tagger for økten"
+                  value={form.tags}
+                  onChange={handleGeneralInfoChange}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                />
+              </label>
+            </div>
+            <div>
+              <label className="block font-medium text-gray-700 dark:text-gray-200">
+                Type aktivitet:
                 <select
-                  value={questionId}
-                  onChange={(e) => {
-                    handleQuestionChange(e, index)
-                  }}
+                  name="sport"
+                  value={form.sport}
+                  onChange={handleGeneralInfoChange}
                   className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
                 >
-                  {questions.map((question) => (
-                    <option key={question.id} value={question.id}>
-                      {question.question} (
-                      {question.type === "radio"
-                        ? "Skala 1-10"
-                        : question.type === "radio:emoji"
-                        ? "☹️ / 🙂 / 😁"
-                        : "Tekst"}
-                      )
-                    </option>
-                  ))}
+                  <option value="">Velg type sport</option>
+                  <option value="Løping">Løping</option>
+                  <option value="Sykling">Sykling</option>
+                  <option value="Ski">Ski</option>
+                  <option value="Triatlon">Triatlon</option>
+                  <option value="Svømming">Svømming</option>
+                  <option value="Styrke">Styrke</option>
+                  <option value="Annet">Annet</option>
                 </select>
               </label>
             </div>
-          ))}
-        </fieldset>
+          </fieldset>
 
-        <fieldset className="mb-8 space-y-4">
-          <legend className="text-lg font-bold text-gray-900 dark:text-gray-200">
-            Intervaller
-          </legend>
-
-          <div>
-            <h3 className="block font-medium text-gray-700 dark:text-gray-200">
-              Velg måleparametere:
-            </h3>
-            <div className="mt-2 flex space-x-4">
-              <div>
-                <input
-                  type="checkbox"
-                  id="heartrate"
-                  value="heartrate"
-                  onChange={handleOptionChange}
-                  className="rounded"
-                />
-                <label
-                  htmlFor="heartrate"
-                  className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-200"
-                >
-                  Hjertefrekvens
-                </label>
-              </div>
-              <div>
-                <input
-                  type="checkbox"
-                  id="watt"
-                  value="watt"
-                  onChange={handleOptionChange}
-                  className="rounded"
-                />
-                <label
-                  htmlFor="watt"
-                  className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-200"
-                >
-                  Watt
-                </label>
-              </div>
-              <div>
-                <input
-                  type="checkbox"
-                  id="speed"
-                  value="speed"
-                  onChange={handleOptionChange}
-                  className="rounded"
-                />
-                <label
-                  htmlFor="speed"
-                  className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-200"
-                >
-                  Fart
-                </label>
-              </div>
-            </div>
-          </div>
-          <label className="block font-medium text-gray-700 dark:text-gray-200">
-            Antall intervaller:
-            <input
-              type="text"
-              min="1"
-              max="10"
-              value={numIntervals}
-              onChange={handleNumIntervalsChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
-            />
-          </label>
-          {form.intervals.map((interval, index) => (
-            <div key={index} className="flex space-x-4">
-              <div className="flex-1">
+          <fieldset className="mb-8 space-y-4">
+            <legend className="text-lg font-bold text-gray-900 dark:text-gray-200">
+              Spørsmål
+            </legend>
+            <label className="block font-medium text-gray-700 dark:text-gray-200">
+              Antall spørsmål:
+              <input
+                type="text"
+                min="1"
+                max="10"
+                value={numQuestions}
+                onChange={handleNumQuestionsChange}
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+              />
+            </label>
+            {form.questionIds.map((questionId, index) => (
+              <div key={index}>
                 <label className="block font-medium text-gray-700 dark:text-gray-200">
-                  Intervall {index + 1} varighet:
-                  <input
-                    type="text"
-                    value={interval.duration}
-                    placeholder="Varighet i minutter"
-                    onChange={(e) => {
-                      handleIntervalChange(e, index, "duration")
-                    }}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
-                  />
-                </label>
-              </div>
-              <div className="flex-1">
-                <label className="block font-medium text-gray-700 dark:text-gray-200">
-                  Intervall {index + 1} intensitetssone:
+                  Spørsmål {index + 1}:
                   <select
-                    value={interval.zone}
+                    value={questionId}
                     onChange={(e) => {
-                      handleIntervalChange(e, index, "zone")
+                      handleQuestionChange(e, index)
                     }}
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
                   >
-                    <option value="1">Sone 1</option>
-                    <option value="2">Sone 2</option>
-                    <option value="3">Sone 3</option>
-                    <option value="4">Sone 4</option>
-                    <option value="5">Sone 5</option>
+                    {questions.map((question) => (
+                      <option key={question.id} value={question.id}>
+                        {question.question} (
+                        {question.type === "radio"
+                          ? "Skala 1-10"
+                          : question.type === "radio:emoji"
+                          ? "☹️ / 🙂 / 😁"
+                          : "Tekst"}
+                        )
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            ))}
+          </fieldset>
+
+          <fieldset className="mb-8 space-y-4">
+            <legend className="text-lg font-bold text-gray-900 dark:text-gray-200">
+              Intervaller
+            </legend>
+
+            <div>
+              <h3 className="block font-medium text-gray-700 dark:text-gray-200">
+                Velg måleparametere:
+              </h3>
+              <div className="mt-2 flex space-x-4">
+                <div>
+                  <input
+                    type="checkbox"
+                    id="heartrate"
+                    value="heartrate"
+                    onChange={handleOptionChange}
+                    className="rounded"
+                  />
+                  <label
+                    htmlFor="heartrate"
+                    className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-200"
+                  >
+                    Hjertefrekvens
+                  </label>
+                </div>
+                <div>
+                  <input
+                    type="checkbox"
+                    id="watt"
+                    value="watt"
+                    onChange={handleOptionChange}
+                    className="rounded"
+                  />
+                  <label
+                    htmlFor="watt"
+                    className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-200"
+                  >
+                    Watt
+                  </label>
+                </div>
+                <div>
+                  <input
+                    type="checkbox"
+                    id="speed"
+                    value="speed"
+                    onChange={handleOptionChange}
+                    className="rounded"
+                  />
+                  <label
+                    htmlFor="speed"
+                    className="ml-2 text-sm font-medium text-gray-700 dark:text-gray-200"
+                  >
+                    Fart
+                  </label>
+                </div>
+              </div>
+            </div>
+            <label className="block font-medium text-gray-700 dark:text-gray-200">
+              Antall intervaller:
+              <input
+                type="text"
+                min="1"
+                max="10"
+                value={numIntervals}
+                onChange={handleNumIntervalsChange}
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+              />
+            </label>
+            {form.intervals.map((interval, index) => (
+              <div key={index} className="flex space-x-4">
+                <div className="flex-1">
+                  <label className="block font-medium text-gray-700 dark:text-gray-200">
+                    Intervall {index + 1} varighet:
+                    <input
+                      type="text"
+                      value={interval.duration}
+                      placeholder="Varighet i minutter"
+                      onChange={(e) => {
+                        handleIntervalChange(e, index, "duration")
+                      }}
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                    />
+                  </label>
+                </div>
+                <div className="flex-1">
+                  <label className="block font-medium text-gray-700 dark:text-gray-200">
+                    Intervall {index + 1} intensitetssone:
+                    <select
+                      value={interval.zone}
+                      onChange={(e) => {
+                        handleIntervalChange(e, index, "zone")
+                      }}
+                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                    >
+                      <option value="1">Sone 1</option>
+                      <option value="2">Sone 2</option>
+                      <option value="3">Sone 3</option>
+                      <option value="4">Sone 4</option>
+                      <option value="5">Sone 5</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+            ))}
+          </fieldset>
+
+          <fieldset className="space-y-4">
+            <legend className="text-lg font-bold text-gray-900 dark:text-gray-200">
+              Treningsmål og konkurranse
+            </legend>
+
+            <div className="flex space-x-4">
+              <div className="flex-1">
+                <label className="block font-medium text-gray-700 dark:text-gray-200">
+                  Treningsmål:
+                  <select
+                    name="trainingGoalId"
+                    value={form.trainingGoalId}
+                    onChange={handleGeneralInfoChange}
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                  >
+                    <option value="">Velg treningsmål</option>
+                    {athlete?.goals?.map((trainingGoal) => (
+                      <option
+                        key={trainingGoal.id}
+                        value={trainingGoal.id.toString()}
+                      >
+                        {new Date(trainingGoal.date).getUTCFullYear()} -{" "}
+                        {trainingGoal.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div className="flex-1">
+                <label className="block font-medium text-gray-700 dark:text-gray-200">
+                  Konkurranse:
+                  <select
+                    name="contestId"
+                    value={form.contestId}
+                    onChange={handleGeneralInfoChange}
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
+                  >
+                    <option value="">Velg konkurranse</option>
+                    {athlete?.contests?.map((contest) => (
+                      <option key={contest.id} value={contest.id.toString()}>
+                        {new Date(contest.date).getUTCFullYear()} -{" "}
+                        {contest.name}
+                      </option>
+                    ))}
                   </select>
                 </label>
               </div>
             </div>
-          ))}
-        </fieldset>
+          </fieldset>
 
-        <fieldset className="space-y-4">
-          <legend className="text-lg font-bold text-gray-900 dark:text-gray-200">
-            Treningsmål og konkurranse
-          </legend>
-
-          <div className="flex space-x-4">
-            <div className="flex-1">
-              <label className="block font-medium text-gray-700 dark:text-gray-200">
-                Treningsmål:
-                <select
-                  name="trainingGoalId"
-                  value={form.trainingGoalId}
-                  onChange={handleGeneralInfoChange}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
-                >
-                  <option value="">Velg treningsmål</option>
-                  {athlete?.goals?.map((trainingGoal) => (
-                    <option
-                      key={trainingGoal.id}
-                      value={trainingGoal.id.toString()}
-                    >
-                      {new Date(trainingGoal.date).getUTCFullYear()} -{" "}
-                      {trainingGoal.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-            <div className="flex-1">
-              <label className="block font-medium text-gray-700 dark:text-gray-200">
-                Konkurranse:
-                <select
-                  name="contestId"
-                  value={form.contestId}
-                  onChange={handleGeneralInfoChange}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:focus:border-indigo-500 dark:focus:ring-indigo-500 sm:text-sm"
-                >
-                  <option value="">Velg konkurranse</option>
-                  {athlete?.contests?.map((contest) => (
-                    <option key={contest.id} value={contest.id.toString()}>
-                      {new Date(contest.date).getUTCFullYear()} - {contest.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            </div>
-          </div>
-        </fieldset>
-
-        <button
-          type="submit"
-          className="mt-4 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-        >
-          Oppdater økt
-        </button>
-      </form>
+          <button
+            type="submit"
+            className="mt-4 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          >
+            Oppdater økt
+          </button>
+        </form>
+      )}
     </Page>
   )
 }

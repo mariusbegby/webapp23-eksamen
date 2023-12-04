@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import type { Athlete } from "@/types"
+import { Parser } from "json2csv"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -117,9 +118,20 @@ export default function Athlete() {
     }
   }
 
-  const handleDownloadActivity = async (activityId: number) => {
-    // TODO: Download activity as excel file
-    console.log(athlete?.activities?.find((a) => a.id === activityId))
+  const handleDownloadActivity = (activityId: number) => {
+    const activity = athlete?.activities?.find((a) => a.id === activityId)
+    if (!activity) return
+
+    const parser = new Parser({ flatten: true })
+    const csv = parser.parse(activity)
+
+    const blob = new Blob([csv], { type: "text/csv" })
+    const url = URL.createObjectURL(blob)
+
+    const link = document.createElement("a")
+    link.href = url
+    link.download = `${athlete?.userId}_activity_${activityId}.csv`
+    link.click()
   }
 
   return (
@@ -412,10 +424,12 @@ export default function Athlete() {
                       </button>
                       {activity.ActivityReport && (
                         <button
-                          onClick={() => handleDownloadActivity(activity.id)}
+                          onClick={() => {
+                            handleDownloadActivity(activity.id)
+                          }}
                           className="rounded-md border border-transparent bg-green-600 px-2 py-1 text-sm font-medium text-white hover:bg-green-700"
                         >
-                          Last ned (TODO)
+                          Last ned
                         </button>
                       )}
                     </td>

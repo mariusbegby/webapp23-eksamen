@@ -4,6 +4,7 @@ import { useState } from "react"
 import { FaBolt, FaCopy, FaHeartbeat, FaTachometerAlt } from "react-icons/fa"
 import type { Athlete } from "@/types"
 import Link from "next/link"
+import { Athlete } from '../types/index';
 
 type AthleteListProps = {
   athletes: Athlete[]
@@ -24,8 +25,99 @@ export function AthleteList({ athletes }: AthleteListProps) {
     }
   }
 
+  const tasks = athletes.flatMap(
+    (athlete) =>
+      athlete.activities?.filter(
+        (activity) =>
+          !activity.ActivityReport && new Date(activity.date) < new Date(),
+      ).map(activity => ({ ...activity, athlete })) ?? [],
+  )
+
+  console.log(tasks);
+
   return (
     <>
+      <h2 className="text-lg font-bold">Oppgaver</h2>
+      <table className="min-w-full divide-y divide-gray-200 border dark:divide-gray-700 dark:bg-gray-800">
+        <thead className="bg-gray-50 dark:bg-gray-900">
+          <tr>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+            >
+              Bruker ID
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+            >
+              Økt ID
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+            >
+              Antall intervaller
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+            >
+              Antall spørsmål
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+            >
+              Rapport status
+            </th>
+            <th
+              scope="col"
+              className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-800 dark:text-gray-200"
+            >
+              Dato
+            </th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
+          {tasks.map((task, index) => (
+              <tr key={index}>
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 transition-colors duration-200 ease-in-out hover:text-black dark:text-gray-300 dark:hover:text-white">
+                <button
+                  onClick={() => copyToClipboard(task.athlete.userId)}
+                  className="mr-2 text-indigo-600 hover:text-indigo-900"
+                >
+                  <FaCopy />
+                </button>
+                <Link href={`/athletes/${task.athlete.userId}`}>
+                  {task.athlete.userId}
+                </Link>
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                {task.id}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                {task.questions.length}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                {task.intervals.length}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                {task.ActivityReport ? "Rapportert" : "Ikke rapportert"}
+              </td>
+              <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                {new Date(task.date).toLocaleDateString("nb-NO")}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {tasks.length === 0 && (
+        <p className="text-gray-500 dark:text-gray-300 mb-4">Ingen oppgaver funnet</p>
+      )}
+
+      <h2 className="text-lg font-bold">Utøvere</h2>
       <input
         type="text"
         placeholder="Søk på Bruker ID"
@@ -116,6 +208,10 @@ export function AthleteList({ athletes }: AthleteListProps) {
           ))}
         </tbody>
       </table>
+
+      {filteredAthletes.length === 0 && (
+        <p className="text-gray-500 dark:text-gray-300">Ingen utøvere funnet</p>
+      )}
     </>
   )
 }

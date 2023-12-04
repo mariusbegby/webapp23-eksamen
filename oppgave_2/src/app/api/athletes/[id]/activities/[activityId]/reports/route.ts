@@ -16,15 +16,15 @@ type ReportInterval = {
   intensityMin: string
   intensityMax: string
   intensityAvg: string
-  heartRateMin: string
-  heartRateMax: string
-  heartRateAvg: string
-  speedMin: string
-  speedMax: string
-  speedAvg: string
-  wattMin: string
-  wattMax: string
-  wattAvg: string
+  heartRateMin?: string
+  heartRateMax?: string
+  heartRateAvg?: string
+  speedMin?: string
+  speedMax?: string
+  speedAvg?: string
+  wattMin?: string
+  wattMax?: string
+  wattAvg?: string
 }
 
 type ReportQuestion = {
@@ -71,15 +71,21 @@ export async function POST(request: NextRequest) {
           intensityMin: parseInt(interval.intensityMin),
           intensityMax: parseInt(interval.intensityMax),
           intensityAvg: parseInt(interval.intensityAvg),
-          heartRateMin: parseInt(interval.heartRateMin),
-          heartRateMax: parseInt(interval.heartRateMax),
-          heartRateAvg: parseInt(interval.heartRateAvg),
-          speedMin: parseInt(interval.speedMin),
-          speedMax: parseInt(interval.speedMax),
-          speedAvg: parseInt(interval.speedAvg),
-          wattMin: parseInt(interval.wattMin),
-          wattMax: parseInt(interval.wattMax),
-          wattAvg: parseInt(interval.wattAvg),
+          heartRateMin: interval.heartRateMin
+            ? parseInt(interval.heartRateMin)
+            : 0,
+          heartRateMax: interval.heartRateMax
+            ? parseInt(interval.heartRateMax)
+            : 0,
+          heartRateAvg: interval.heartRateAvg
+            ? parseInt(interval.heartRateAvg)
+            : 0,
+          speedMin: interval.speedMin ? parseInt(interval.speedMin) : 0,
+          speedMax: interval.speedMax ? parseInt(interval.speedMax) : 0,
+          speedAvg: interval.speedAvg ? parseInt(interval.speedAvg) : 0,
+          wattMin: interval.wattMin ? parseInt(interval.wattMin) : 0,
+          wattMax: interval.wattMax ? parseInt(interval.wattMax) : 0,
+          wattAvg: interval.wattAvg ? parseInt(interval.wattAvg) : 0,
           Interval: {
             connect: { id: interval.intervalId },
           },

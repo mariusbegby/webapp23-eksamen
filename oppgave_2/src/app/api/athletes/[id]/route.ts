@@ -34,7 +34,12 @@ export async function GET(request: NextRequest) {
             questions: true,
             TrainingContest: true,
             TrainingGoal: true,
-            ActivityReport: true,
+            ActivityReport: {
+              include: {
+                ReportIntervals: true,
+                ReportQuestions: true,
+              },
+            },
           },
         },
         reports: true,

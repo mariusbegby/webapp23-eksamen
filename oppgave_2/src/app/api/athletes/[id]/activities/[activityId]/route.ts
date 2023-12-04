@@ -144,7 +144,7 @@ export async function DELETE(request: NextRequest) {
   try {
     const activity = await prisma.activity.findUnique({
       where: { id: activityId },
-      include: { questions: true },
+      include: { intervals: true, questions: true },
     })
 
     if (!activity) {
@@ -161,10 +161,14 @@ export async function DELETE(request: NextRequest) {
       }),
     )
 
+    const deleteReportIntervals = activity.intervals.map((interval) =>
+      prisma.reportInterval.deleteMany({
+        where: { intervalId: interval.id },
+      }),
+    )
+
     const deleteIntervals = prisma.interval.deleteMany({
-      where: {
-        activityId: activityId,
-      },
+      where: { activityId: activityId },
     })
 
     const deleteActivity = prisma.activity.delete({
@@ -181,6 +185,7 @@ export async function DELETE(request: NextRequest) {
 
     await prisma.$transaction([
       ...disconnectQuestions,
+      ...deleteReportIntervals,
       deleteIntervals,
       deleteActivity,
       deleteMetricOptions,
