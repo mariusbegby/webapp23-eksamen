@@ -4,6 +4,7 @@ import { useState } from "react"
 import type { Question } from "@prisma/client"
 
 import { Page } from "@/components/PageTemplate"
+import StatusMessage from "@/components/StatusMessage"
 
 type QuestionForm = {
   question: string
@@ -80,25 +81,7 @@ export default function NewQuestion() {
   return (
     <Page title="Opprett spørsmål" backButtonLocation="/">
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <div
-            className="relative rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
-            role="alert"
-          >
-            <strong className="font-bold">Feilmelding: </strong>
-            <span className="block sm:inline"> {error}</span>
-          </div>
-        )}
-
-        {message && (
-          <div
-            className="relative rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700"
-            role="alert"
-          >
-            <strong className="font-bold">Status: </strong>
-            <span className="block sm:inline">{message}</span>
-          </div>
-        )}
+        <StatusMessage errorMessage={error} statusMessage={message} />
 
         <div>
           <label className="block font-medium text-gray-700 dark:text-gray-200">

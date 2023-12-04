@@ -6,6 +6,7 @@ import Link from "next/link"
 import { v4 } from "uuid"
 
 import { Page } from "@/components/PageTemplate"
+import StatusMessage from "@/components/StatusMessage"
 
 const uuidv4: () => string = v4
 
@@ -29,9 +30,7 @@ export default function NewAthlete() {
   })
 
   const [error, setError] = useState<string | null>(null)
-  const [newAthleteId, setNewAthleteId] = useState<string | undefined | null>(
-    null,
-  )
+  const [message, setMessage] = useState<string | null>(null)
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -74,7 +73,9 @@ export default function NewAthlete() {
     if (response.ok) {
       setError(null)
       const responseData = (await response.json()) as ResponseData
-      setNewAthleteId(responseData.data?.userId)
+      setMessage(
+        `Utøver med bruker id ${responseData.data?.userId} ble lagt til.`,
+      )
       setAthlete({
         userId: uuidv4(),
         sport: "",
@@ -90,7 +91,7 @@ export default function NewAthlete() {
       const data = (await response.json()) as ResponseData
 
       if (data.error) {
-        setNewAthleteId(null)
+        setMessage(null)
         switch (data.error) {
           case "Sport and gender are required":
             setError("Feltene sport og kjønn må fylles ut.")
@@ -108,34 +109,7 @@ export default function NewAthlete() {
   return (
     <Page title="Legg til utøver" backButtonLocation="/">
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <div
-            className="relative rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
-            role="alert"
-          >
-            <strong className="font-bold">Feilmelding: </strong>
-            <span className="block sm:inline"> {error}</span>
-          </div>
-        )}
-
-        {newAthleteId && (
-          <div
-            className="relative rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700"
-            role="alert"
-          >
-            <strong className="font-bold">Status: </strong>
-            <span className="block sm:inline">
-              Utøver med bruker id{" "}
-              <Link
-                href={`/athletes/${newAthleteId}`}
-                className="text-green-600 hover:text-green-900"
-              >
-                {newAthleteId}
-              </Link>{" "}
-              ble lagt til.
-            </span>
-          </div>
-        )}
+        <StatusMessage errorMessage={error} statusMessage={message} />
 
         <div>
           <label className="block font-medium text-gray-700 dark:text-gray-200">

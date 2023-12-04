@@ -5,6 +5,7 @@ import type { Activity, Athlete, MetricOptions, Question, Sport } from "@/types"
 import { usePathname } from "next/navigation"
 
 import { Page } from "@/components/PageTemplate"
+import StatusMessage from "@/components/StatusMessage"
 
 type Interval = {
   duration: string
@@ -308,25 +309,7 @@ export default function EditActivity() {
         </div>
       ) : (
         <form onSubmit={handleSubmit}>
-          {error && (
-            <div
-              className="relative mb-4 rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
-              role="alert"
-            >
-              <strong className="font-bold">Feilmelding: </strong>
-              <span className="block sm:inline"> {error}</span>
-            </div>
-          )}
-
-          {message && (
-            <div
-              className="relative mb-4 rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700"
-              role="alert"
-            >
-              <strong className="font-bold">Status: </strong>
-              <span className="block sm:inline"> {message}</span>
-            </div>
-          )}
+          <StatusMessage errorMessage={error} statusMessage={message} />
 
           <fieldset className="mb-8 space-y-4">
             <legend className="text-lg font-bold text-gray-900 dark:text-gray-200">

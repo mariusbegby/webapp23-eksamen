@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 
 import { Page } from "@/components/PageTemplate"
+import StatusMessage from "@/components/StatusMessage"
 
 type ResponseData = {
   success: boolean
@@ -56,25 +57,7 @@ export default function NewQuestion() {
   return (
     <Page title="Importer utøvere" backButtonLocation="/">
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <div
-            className="relative rounded border border-red-400 bg-red-100 px-4 py-3 text-red-700"
-            role="alert"
-          >
-            <strong className="font-bold">Feilmelding: </strong>
-            <span className="block sm:inline"> {error}</span>
-          </div>
-        )}
-
-        {message && (
-          <div
-            className="relative mb-4 rounded border border-green-400 bg-green-100 px-4 py-3 text-green-700"
-            role="alert"
-          >
-            <strong className="font-bold">Status: </strong>
-            <span className="block sm:inline"> {message}</span>
-          </div>
-        )}
+        <StatusMessage errorMessage={error} statusMessage={message} />
 
         {alreadyImported ? (
           <div
