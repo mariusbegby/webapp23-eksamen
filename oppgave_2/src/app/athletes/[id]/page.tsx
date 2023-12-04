@@ -96,31 +96,12 @@ export default function Athlete() {
     }
   }
 
-  const handleDuplicateActivity = async (activityId: number) => {
-    const response = await fetch(
-      `/api/athletes/${id}/activities/${activityId}`,
-      {
-        method: "POST",
-      },
-    )
-
-    const data = (await response.json()) as ResponseData
-
-    if (data.success) {
-      // eslint-disable-next-line no-console
-      fetchAthlete().catch(console.error)
-    }
-  }
-
   const handleDownloadActivity = (activityId: number) => {
     const activity = athlete?.activities?.find((a) => a.id === activityId)
     if (!activity) return
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const parser = new Parser()
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const csv = parser.parse(activity)
-
     const blob = new Blob([csv], { type: "text/csv" })
     const url = URL.createObjectURL(blob)
 
@@ -211,7 +192,8 @@ export default function Athlete() {
               <ul className="mt-4 list-inside list-disc">
                 {athlete.goals.map((goal) => (
                   <li key={goal.id}>
-                    Navn: {goal.name}, Mål: {goal.goal}, Dato: {goal.date}
+                    Navn: {goal.name}, Mål: {goal.goal}, Dato:{" "}
+                    {new Date(goal.date).toLocaleDateString("nb-NO")}
                   </li>
                 ))}
               </ul>
@@ -231,7 +213,7 @@ export default function Athlete() {
                 {athlete.contests.map((contest) => (
                   <li key={contest.id}>
                     Navn: {contest.name}, Mål: {contest.goal}, Dato:{" "}
-                    {contest.date}
+                    {new Date(contest.date).toLocaleDateString("nb-NO")}
                   </li>
                 ))}
               </ul>
@@ -406,28 +388,22 @@ export default function Athlete() {
                           Endre
                         </button>
                       </Link>
-                      <button
-                        onClick={() => handleDuplicateActivity(activity.id)}
-                        className="mr-2 rounded-md border border-transparent bg-indigo-600 px-2 py-1 text-sm font-medium text-white hover:bg-indigo-700"
-                      >
-                        Dupliser (TODO)
-                      </button>
+                      {activity.ActivityReport && (
+                        <button
+                          onClick={() => {
+                            handleDownloadActivity(activity.id)
+                          }}
+                          className="mr-2 rounded-md border border-transparent bg-indigo-600 px-2 py-1 text-sm font-medium text-white hover:bg-indigo-700"
+                        >
+                          Last ned
+                        </button>
+                      )}
                       <button
                         onClick={() => handleDeleteActivity(activity.id)}
                         className="mr-2 rounded-md border border-transparent bg-red-600 px-2 py-1 text-sm font-medium text-white hover:bg-red-700"
                       >
                         Slett
                       </button>
-                      {activity.ActivityReport && (
-                        <button
-                          onClick={() => {
-                            handleDownloadActivity(activity.id)
-                          }}
-                          className="rounded-md border border-transparent bg-green-600 px-2 py-1 text-sm font-medium text-white hover:bg-green-700"
-                        >
-                          Last ned
-                        </button>
-                      )}
                     </td>
                   </tr>
                 ))}
