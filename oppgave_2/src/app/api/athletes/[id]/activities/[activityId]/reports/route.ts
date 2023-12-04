@@ -1,8 +1,8 @@
+import type { Athlete, IntensityZone } from "@/types"
 import type { NextRequest } from "next/server"
 import { NextResponse } from "next/server"
 
 import { prisma } from "@/lib/prisma"
-import { Athlete, IntensityZone } from "@/types"
 
 type ActivityReportRequestBody = {
   date: string

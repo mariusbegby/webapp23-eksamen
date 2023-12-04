@@ -61,7 +61,7 @@ export type Interval = {
 }
 
 type Meta = {
-  id?: number
+  id: number
   heartrate: number | null
   watt: number | null
   speed: number | null
@@ -81,14 +81,14 @@ export type Sport =
 export type Priority = "A" | "B" | "C" | ""
 
 export type IntensityZone = {
-  id: number
+  id?: number
   type: string
   zone: number
   intensity: number
 }
 
 export type Question = {
-  id: string
+  id?: string
   question: string
   type: string
 }

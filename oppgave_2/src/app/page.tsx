@@ -23,11 +23,10 @@ export default function Dashboard() {
 
       if (data.success) {
         setAthletes(data.data)
-      } else {
-        console.error(data.error)
       }
     }
 
+    // eslint-disable-next-line no-console
     fetchAthletes().catch(console.error)
   }, [])
 

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import type { Activity, Athlete, Interval, Question } from "@/types"
+import type { Activity, Question } from "@/types"
 import { usePathname } from "next/navigation"
 
 import { Page } from "@/components/PageTemplate"
@@ -44,12 +44,6 @@ type ResponseDataNewReport = {
   data?: JSON
 }
 
-type ResponseDataAthlete = {
-  success: boolean
-  data: Athlete
-  error?: string
-}
-
 type ResponseDataQuestions = {
   success: boolean
   data: Question[]
@@ -66,7 +60,6 @@ export default function NewReport() {
   const [error, setError] = useState<string | null>(null)
   const [message, setMessage] = useState<string | null>(null)
 
-  const [athlete, setAthlete] = useState<Athlete | null>(null)
   const [activity, setActivity] = useState<Activity | null>(null)
   const [questions, setQuestions] = useState<Question[]>([])
 
@@ -113,28 +106,11 @@ export default function NewReport() {
 
       if (data.success) {
         setQuestions(data.data)
-      } else {
-        console.error(data.error)
       }
     }
-
+    // eslint-disable-next-line no-console
     fetchQuestions().catch(console.error)
   }, [])
-
-  useEffect(() => {
-    const fetchAthleteData = async () => {
-      const response = await fetch(`/api/athletes/${id}`)
-      const data = (await response.json()) as ResponseDataAthlete
-
-      if (data.success) {
-        setAthlete(data.data)
-      } else {
-        console.error(data.error)
-      }
-    }
-
-    fetchAthleteData().catch(console.error)
-  }, [id])
 
   useEffect(() => {
     const fetchActivity = async () => {
@@ -168,18 +144,16 @@ export default function NewReport() {
           }),
           ReportQuestions: data.data.questions.map((question) => {
             return {
-              questionId: question.id,
+              questionId: question.id ?? "",
               question: question.question,
               type: question.type,
               answer: "",
             }
           }),
         })
-      } else {
-        console.error(data.error)
       }
     }
-
+    // eslint-disable-next-line no-console
     fetchActivity().catch(console.error)
   }, [id, activityId])
 
@@ -195,7 +169,11 @@ export default function NewReport() {
     index: number,
   ) => {
     const updatedIntervals = [...form.ReportIntervals]
-    updatedIntervals[index][e.target.name] = e.target.value
+    const target = e.target as HTMLInputElement
+    if (target.name in updatedIntervals[index]) {
+      updatedIntervals[index][target.name as keyof ReportInterval] =
+        target.value
+    }
     setForm({ ...form, ReportIntervals: updatedIntervals })
   }
 
@@ -204,7 +182,8 @@ export default function NewReport() {
     index: number,
   ) => {
     const updatedQuestions = [...form.ReportQuestions]
-    updatedQuestions[index].answer = e.target.value
+    const target = e.target as HTMLInputElement | HTMLSelectElement
+    updatedQuestions[index].answer = target.value
     setForm({ ...form, ReportQuestions: updatedQuestions })
   }
 

@@ -64,8 +64,6 @@ export default function Athlete() {
 
     if (data.success) {
       setAthlete(data.data)
-    } else {
-      console.error(data.error)
     }
   }
 
@@ -76,11 +74,9 @@ export default function Athlete() {
 
       if (data.success) {
         setAthlete(data.data)
-      } else {
-        console.error(data.error)
       }
     }
-
+    // eslint-disable-next-line no-console
     fetchAthletes().catch(console.error)
   }, [id])
 
@@ -95,9 +91,8 @@ export default function Athlete() {
     const data = (await response.json()) as ResponseData
 
     if (data.success) {
+      // eslint-disable-next-line no-console
       fetchAthlete().catch(console.error)
-    } else {
-      console.error(data.error)
     }
   }
 
@@ -112,9 +107,8 @@ export default function Athlete() {
     const data = (await response.json()) as ResponseData
 
     if (data.success) {
+      // eslint-disable-next-line no-console
       fetchAthlete().catch(console.error)
-    } else {
-      console.error(data.error)
     }
   }
 
@@ -122,7 +116,9 @@ export default function Athlete() {
     const activity = athlete?.activities?.find((a) => a.id === activityId)
     if (!activity) return
 
-    const parser = new Parser({ flatten: true })
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+    const parser = new Parser()
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const csv = parser.parse(activity)
 
     const blob = new Blob([csv], { type: "text/csv" })

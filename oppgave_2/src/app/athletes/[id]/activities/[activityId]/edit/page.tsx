@@ -97,11 +97,10 @@ export default function EditActivity() {
 
       if (data.success) {
         setQuestions(data.data)
-      } else {
-        console.error(data.error)
       }
     }
 
+    // eslint-disable-next-line no-console
     fetchQuestions().catch(console.error)
   }, [])
 
@@ -112,11 +111,9 @@ export default function EditActivity() {
 
       if (data.success) {
         setAthlete(data.data)
-      } else {
-        console.error(data.error)
       }
     }
-
+    // eslint-disable-next-line no-console
     fetchAthleteData().catch(console.error)
   }, [id])
 
@@ -133,7 +130,7 @@ export default function EditActivity() {
           name: data.data.name,
           tags: data.data.tags,
           sport: data.data.sport,
-          questionIds: data.data.questions.map((question) => question.id),
+          questionIds: data.data.questions.map((question) => question.id ?? ""),
           metricOptions: data.data.metricOptions,
           intervals: data.data.intervals.map((interval) => ({
             duration: interval.duration.toString(),
@@ -146,11 +143,9 @@ export default function EditActivity() {
         setNumIntervals(data.data.intervals.length)
         setNumQuestions(data.data.questions.length)
         setActivity(data.data)
-      } else {
-        console.error(data.error)
       }
     }
-
+    // eslint-disable-next-line no-console
     fetchActivity().catch(console.error)
   }, [id, activityId])
 
@@ -261,7 +256,9 @@ export default function EditActivity() {
         name: updatedActivity.name,
         tags: updatedActivity.tags,
         sport: updatedActivity.sport,
-        questionIds: updatedActivity.questions.map((question) => question.id),
+        questionIds: updatedActivity.questions.map(
+          (question) => question.id ?? "",
+        ),
         metricOptions: {
           heartrate: updatedActivity.metricOptions.heartrate,
           watt: updatedActivity.metricOptions.watt,

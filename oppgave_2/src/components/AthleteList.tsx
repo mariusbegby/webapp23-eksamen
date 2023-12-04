@@ -4,7 +4,6 @@ import { useState } from "react"
 import { FaBolt, FaCopy, FaHeartbeat, FaTachometerAlt } from "react-icons/fa"
 import type { Athlete } from "@/types"
 import Link from "next/link"
-import { Athlete } from '../types/index';
 
 type AthleteListProps = {
   athletes: Athlete[]
@@ -27,10 +26,12 @@ export function AthleteList({ athletes }: AthleteListProps) {
 
   const tasks = athletes.flatMap(
     (athlete) =>
-      athlete.activities?.filter(
-        (activity) =>
-          !activity.ActivityReport && new Date(activity.date) < new Date(),
-      ).map(activity => ({ ...activity, athlete })) ?? [],
+      athlete.activities
+        ?.filter(
+          (activity) =>
+            !activity.ActivityReport && new Date(activity.date) < new Date(),
+        )
+        .map((activity) => ({ ...activity, athlete })) ?? [],
   )
 
   return (
@@ -79,7 +80,7 @@ export function AthleteList({ athletes }: AthleteListProps) {
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
           {tasks.map((task, index) => (
-              <tr key={index}>
+            <tr key={index}>
               <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 transition-colors duration-200 ease-in-out hover:text-black dark:text-gray-300 dark:hover:text-white">
                 <button
                   onClick={() => copyToClipboard(task.athlete.userId)}
@@ -112,7 +113,9 @@ export function AthleteList({ athletes }: AthleteListProps) {
       </table>
 
       {tasks.length === 0 && (
-        <p className="text-gray-500 dark:text-gray-300 mb-4">Ingen oppgaver funnet</p>
+        <p className="mb-4 text-gray-500 dark:text-gray-300">
+          Ingen oppgaver funnet
+        </p>
       )}
 
       <h2 className="text-lg font-bold">Utøvere</h2>
@@ -185,22 +188,20 @@ export function AthleteList({ athletes }: AthleteListProps) {
                 {athlete.activities?.length}
               </td>
               <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
-                {athlete.meta && (
-                  <div className="flex items-center space-x-2">
-                    <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
-                      <FaHeartbeat className="mr-1 text-red-800" />
-                      {athlete.meta.heartrate}
-                    </span>
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                      <FaBolt className="mr-1 text-green-800" />
-                      {athlete.meta.watt}
-                    </span>
-                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                      <FaTachometerAlt className="mr-1 text-blue-800" />
-                      {athlete.meta.speed}
-                    </span>
-                  </div>
-                )}
+                <div className="flex items-center space-x-2">
+                  <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                    <FaHeartbeat className="mr-1 text-red-800" />
+                    {athlete.meta.heartrate}
+                  </span>
+                  <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                    <FaBolt className="mr-1 text-green-800" />
+                    {athlete.meta.watt}
+                  </span>
+                  <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                    <FaTachometerAlt className="mr-1 text-blue-800" />
+                    {athlete.meta.speed}
+                  </span>
+                </div>
               </td>
             </tr>
           ))}

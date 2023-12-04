@@ -72,6 +72,7 @@ export default function NewQuestion() {
         type: "",
       })
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error(error)
     }
   }

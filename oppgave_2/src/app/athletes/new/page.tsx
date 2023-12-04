@@ -21,6 +21,7 @@ export default function NewAthlete() {
     sport: "",
     gender: "",
     meta: {
+      id: 0,
       heartrate: 0,
       watt: 0,
       speed: 0,
@@ -50,11 +51,7 @@ export default function NewAthlete() {
         return {
           ...prevAthlete,
           meta: {
-            ...(prevAthlete.meta ?? {
-              heartrate: 0,
-              watt: 0,
-              speed: 0,
-            }),
+            ...prevAthlete.meta,
             [e.target.name]: value,
           },
         }
@@ -83,6 +80,7 @@ export default function NewAthlete() {
         sport: "",
         gender: "",
         meta: {
+          id: 0,
           heartrate: 0,
           watt: 0,
           speed: 0,

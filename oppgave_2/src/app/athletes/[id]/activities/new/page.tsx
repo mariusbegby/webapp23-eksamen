@@ -92,17 +92,15 @@ export default function NewActivity() {
       const response = await fetch("/api/questions")
       const data = (await response.json()) as ResponseDataQuestions
 
-      if (data.success) {
+      if (data.success && data.data[0]?.id) {
         setQuestions(data.data)
         setForm((prevForm) => ({
           ...prevForm,
-          questionIds: [data.data[0].id],
+          questionIds: [data.data[0].id ?? ""],
         }))
-      } else {
-        console.error(data.error)
       }
     }
-
+    // eslint-disable-next-line no-console
     fetchQuestions().catch(console.error)
   }, [])
 
@@ -113,11 +111,9 @@ export default function NewActivity() {
 
       if (data.success) {
         setAthlete(data.data)
-      } else {
-        console.error(data.error)
       }
     }
-
+    // eslint-disable-next-line no-console
     fetchAthleteData().catch(console.error)
   }, [id])
 
